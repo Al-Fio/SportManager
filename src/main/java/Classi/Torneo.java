@@ -92,4 +92,18 @@ public class Torneo {
     public void setStato(boolean stato) {
         this.stato = stato;
     }
+
+    @Override
+    public String toString() {
+        return "Torneo{" +
+                "nome='" + nome + '\'' +
+                ", quotaIscrizione=" + quotaIscrizione +
+                ", codice=" + codice +
+                ", sport=" + sport +
+                ", regolamento=" + regolamento +
+                ", modalita=" + modalita +
+                ", elencoSquadre=" + elencoSquadre +
+                ", stato=" + stato +
+                '}';
+    }
 }

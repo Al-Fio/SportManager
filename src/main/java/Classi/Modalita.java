@@ -1,7 +1,13 @@
 package Classi;
+import Enum.TipoModalita;
 
 public class Modalita {
-    private int codice;//mancano le altre specifiche
+    private int codice;
+    private TipoModalita nome;
+
+    public Modalita(int codice, TipoModalita nome) {
+        this.codice = codice;
+    }
 
     public int getCodice() {
         return codice;
@@ -11,7 +17,11 @@ public class Modalita {
         this.codice = codice;
     }
 
-    public Modalita(int codice) {
-        this.codice = codice;
+    @Override
+    public String toString() {
+        return "Modalita{" +
+                "codice=" + codice +
+                ", nome=" + nome +
+                '}';
     }
 }

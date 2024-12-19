@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SportManager {
+import static Enum.TipoModalita.CAMPIONATO;
+import static Enum.TipoModalita.ELIMINAZIONE_DIRETTA;
 
+public class SportManager {
     private static SportManager instanceSportManager;
     private Map<Integer, Modalita> elencoModalita;
     private Map<Integer, Regolamento> elencoRegolamenti;
@@ -37,14 +39,16 @@ public class SportManager {
     // Da chiedere come implementare il caricamento nel caso d'uso d'avviamento
     public void loadSports(){
         sports.put(1, new Sport(1, "Calcio"));
+        sports.put(2, new Sport(2, "Calcio5"));
+        sports.put(3, new Sport(3, "Calcio7"));
     }
 
     public void loadElencoModalita(){
-        elencoModalita.put(1, new Modalita(1));
+        elencoModalita.put(1, new Modalita(1, CAMPIONATO));
     }
 
     public void loadElencoRegolamento(){
-        elencoRegolamenti.put(1, new Regolamento(1));
+        elencoRegolamenti.put(1, new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1));
     }
 
     public void loadStagione() {
@@ -77,7 +81,7 @@ public class SportManager {
         stagione.confermaTorneo();
     }
 
-    public void nuovaSquadra(int codice_sport, String nome) { //meglio sarebbe usare nome_squadra
+    public void nuovaSquadra(int codice_sport, String nome) {
 
         Sport sport = sports.get(codice_sport);
 
@@ -118,5 +122,45 @@ public class SportManager {
 
     public void confermaIscrizioneSquadra() {
         stagione.confermaIscrizioneSquadra();
+    }
+
+    public static SportManager getInstanceSportManager() {
+        return instanceSportManager;
+    }
+
+    public static void setInstanceSportManager(SportManager instanceSportManager) {
+        SportManager.instanceSportManager = instanceSportManager;
+    }
+
+    public Stagione getStagione() {
+        return stagione;
+    }
+
+    public void setStagione(Stagione stagione) {
+        this.stagione = stagione;
+    }
+
+    public Map<Integer, Sport> getSports() {
+        return sports;
+    }
+
+    public void setSports(Map<Integer, Sport> sports) {
+        this.sports = sports;
+    }
+
+    public Map<Integer, Regolamento> getElencoRegolamenti() {
+        return elencoRegolamenti;
+    }
+
+    public void setElencoRegolamenti(Map<Integer, Regolamento> elencoRegolamenti) {
+        this.elencoRegolamenti = elencoRegolamenti;
+    }
+
+    public Map<Integer, Modalita> getElencoModalita() {
+        return elencoModalita;
+    }
+
+    public void setElencoModalita(Map<Integer, Modalita> elencoModalita) {
+        this.elencoModalita = elencoModalita;
     }
 }

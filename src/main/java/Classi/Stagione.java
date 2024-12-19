@@ -18,7 +18,7 @@ public class Stagione {
 
     private Stagione(String nome) {
         this.nome = nome;
-        this.codice = 0;
+        this.codice = 1;
 
         this.elencoTornei = new HashMap<Integer, Torneo>();
         this.elencoSquadre = new HashMap<String, Squadra>();
@@ -92,5 +92,72 @@ public class Stagione {
 
         torneoCorrente = null;
         squadraCorrente = null;
+    }
+
+    public Torneo getTorneoCorrente() {
+        return torneoCorrente;
+    }
+
+    public void setTorneoCorrente(Torneo torneoCorrente) {
+        this.torneoCorrente = torneoCorrente;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public static Stagione getInstanceStagione() {
+        return instanceStagione;
+    }
+
+    public static void setInstanceStagione(Stagione instanceStagione) {
+        Stagione.instanceStagione = instanceStagione;
+    }
+
+    public static int getCodice() {
+        return codice;
+    }
+
+    public static void setCodice(int codice) {
+        Stagione.codice = codice;
+    }
+
+    public Map<String, Squadra> getElencoSquadre() {
+        return elencoSquadre;
+    }
+
+    public void setElencoSquadre(Map<String, Squadra> elencoSquadre) {
+        this.elencoSquadre = elencoSquadre;
+    }
+
+    public Squadra getSquadraCorrente() {
+        return squadraCorrente;
+    }
+
+    public void setSquadraCorrente(Squadra squadraCorrente) {
+        this.squadraCorrente = squadraCorrente;
+    }
+
+    public Map<Integer, Torneo> getElencoTornei() {
+        return elencoTornei;
+    }
+
+    public void setElencoTornei(Map<Integer, Torneo> elencoTornei) {
+        this.elencoTornei = elencoTornei;
+    }
+
+    @Override
+    public String toString() {
+        return "Stagione{" +
+                "torneoCorrente=" + torneoCorrente +
+                ", elencoTornei=" + elencoTornei +
+                ", squadraCorrente=" + squadraCorrente +
+                ", elencoSquadre=" + elencoSquadre +
+                ", nome='" + nome + '\'' +
+                '}';
     }
 }

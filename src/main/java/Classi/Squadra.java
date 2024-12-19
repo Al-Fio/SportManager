@@ -42,4 +42,13 @@ public class Squadra {
     public void setSport(Sport sport) {
         this.sport = sport;
     }
+
+    @Override
+    public String toString() {
+        return "Squadra{" +
+                "nome='" + nome + '\'' +
+                ", elencoComponenti=" + elencoComponenti +
+                ", sport=" + sport +
+                '}';
+    }
 }

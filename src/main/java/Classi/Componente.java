@@ -14,4 +14,15 @@ public class Componente {
         this.cognome = cognome;
         this.nome = nome;
     }
+
+    @Override
+    public String toString() {
+        return "Componente{" +
+                "CF='" + CF + '\'' +
+                ", nome='" + nome + '\'' +
+                ", cognome='" + cognome + '\'' +
+                ", ruolo='" + ruolo + '\'' +
+                ", eta=" + eta +
+                '}';
+    }
 }
