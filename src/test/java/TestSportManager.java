@@ -1,5 +1,6 @@
 import Classi.SportManager;
 
+import Classi.Stagione;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,18 +17,29 @@ public class TestSportManager {
 
     @After
     public void clearTest(){
-
+        Stagione stagione = sportManager.getStagione();
+        stagione.getElencoTornei().clear();
+        stagione.getElencoSquadre().clear();
     }
 
     @Test
     public void testNuovoTorneo() {
-        sportManager.nuovoTorneo("WorldCup", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup", 1, 1, 150);
         assertNotNull(sportManager.getStagione().getTorneoCorrente());
     }
 
     @Test
+    public void testNuovoRegolamento() {
+        sportManager.nuovoTorneo("WorldCup", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
+
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getRegolamento());
+    }
+
+    @Test
     public void testConfermaTorneo() {
-        sportManager.nuovoTorneo("WorldCup", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
         assertNull(sportManager.getStagione().getTorneoCorrente());
@@ -68,13 +80,16 @@ public class TestSportManager {
 
     @Test
     public void testSelezionaSport() {
-        sportManager.nuovoTorneo("WorldCup2025", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup2025", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
-        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
-        sportManager.nuovoTorneo("WorldCup", 2, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup", 2, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
         System.out.println(sportManager.selezionaSport(1));
@@ -82,7 +97,8 @@ public class TestSportManager {
 
     @Test
     public void testSelezionaTorneo() {
-        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
         sportManager.selezionaTorneo(1);
@@ -95,7 +111,8 @@ public class TestSportManager {
         sportManager.nuovaSquadra(1, "Bari");
         sportManager.confermaSquadra();
 
-        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
         sportManager.selezionaTorneo(1);
@@ -109,7 +126,8 @@ public class TestSportManager {
         sportManager.nuovaSquadra(1, "Bari");
         sportManager.confermaSquadra();
 
-        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 1, 150);
+        sportManager.nuovoTorneo("WorldCup2026", 1, 1, 150);
+        sportManager.nuovoRegolamento(20, 8, 3, 1, 0);
         sportManager.confermaTorneo();
 
         sportManager.selezionaTorneo(1);

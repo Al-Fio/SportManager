@@ -6,36 +6,27 @@ import java.util.List;
 import java.util.Map;
 
 public class Stagione {
+    private String nome;
+
     private Torneo torneoCorrente;
     private Map<Integer, Torneo> elencoTornei;
 
     private Squadra squadraCorrente;
     private Map<String, Squadra> elencoSquadre;
 
-    private static int codice;
-    private static Stagione instanceStagione;
-    private String nome;
-
-    private Stagione(String nome) {
+    public Stagione(String nome) {
         this.nome = nome;
-        this.codice = 1;
 
         this.elencoTornei = new HashMap<Integer, Torneo>();
         this.elencoSquadre = new HashMap<String, Squadra>();
     }
 
-    // Chiedere se si può passare
-    public static Stagione getInstance(String nome) {
-        if (instanceStagione == null) {
-            System.err.println("Stagione inizializzata");
-            instanceStagione = new Stagione(nome);
-        }
-
-        return instanceStagione;
+    public void aggiungiTorneo(String nome, Sport sport, Modalita modalita, float quotaIscrizione) {
+        this.torneoCorrente = new Torneo(this.elencoTornei.size()+1, nome, sport, modalita, quotaIscrizione);
     }
 
-    public void aggiungiTorneo(String nome, Sport sport, Regolamento regolamento, Modalita modalita, float quotaIscrizione) {
-        this.torneoCorrente = new Torneo(codice++, nome, sport, regolamento, modalita, quotaIscrizione);
+    public void nuovoRegolamento(int numeroSquadre, int numeroMaxComponentiSquadra, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
+        torneoCorrente.nuovoRegolamento(numeroSquadre, numeroMaxComponentiSquadra, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
     }
 
     public void confermaTorneo() {
@@ -110,22 +101,6 @@ public class Stagione {
         this.nome = nome;
     }
 
-    public static Stagione getInstanceStagione() {
-        return instanceStagione;
-    }
-
-    public static void setInstanceStagione(Stagione instanceStagione) {
-        Stagione.instanceStagione = instanceStagione;
-    }
-
-    public static int getCodice() {
-        return codice;
-    }
-
-    public static void setCodice(int codice) {
-        Stagione.codice = codice;
-    }
-
     public Map<String, Squadra> getElencoSquadre() {
         return elencoSquadre;
     }
@@ -153,11 +128,11 @@ public class Stagione {
     @Override
     public String toString() {
         return "Stagione{" +
-                "torneoCorrente=" + torneoCorrente +
+                "nome='" + nome + '\'' +
+                ", torneoCorrente=" + torneoCorrente +
                 ", elencoTornei=" + elencoTornei +
                 ", squadraCorrente=" + squadraCorrente +
                 ", elencoSquadre=" + elencoSquadre +
-                ", nome='" + nome + '\'' +
                 '}';
     }
 }

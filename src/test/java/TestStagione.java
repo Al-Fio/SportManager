@@ -2,39 +2,56 @@ import Classi.Modalita;
 import Classi.Regolamento;
 import Classi.Sport;
 import Classi.Stagione;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static Enum.TipoModalita.CAMPIONATO;
 import static org.junit.Assert.*;
 
 public class TestStagione {
-    private static Stagione stagione;
+    static Stagione stagione;
 
     @BeforeClass
     public static void initTest() {
-        stagione = Stagione.getInstance("2024");
+        stagione = new Stagione("2024_2025");
+    }
+
+    @After
+    public void clearTest(){
+        stagione.getElencoTornei().clear();
+        stagione.getElencoSquadre().clear();
     }
 
     @Test
     public void testAggiungiTorneo() {
         Sport sport = new Sport(1, "Calcio");
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
+        Modalita modalita = new Modalita(1, "campionato");
 
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
 
         assertNotNull(stagione.getTorneoCorrente());
     }
 
     @Test
+    public void testNuovoRegolamento() {
+        Sport sport = new Sport(1, "Calcio");
+        Modalita modalita = new Modalita(1, "campionato");
+
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
+
+        assertNotNull(stagione.getTorneoCorrente().getRegolamento());
+    }
+
+    @Test
     public void testConfermaTorneo() {
         Sport sport = new Sport(1, "Calcio");
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
+        Modalita modalita = new Modalita(1, "campionato");
 
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         assertNull(stagione.getTorneoCorrente());
@@ -73,16 +90,16 @@ public class TestStagione {
     @Test
     public void testTorneiPerSport() {
         Sport sport = new Sport(1, "Calcio");
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        Modalita modalita = new Modalita(1, "campionato");
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         sport = new Sport(2, "Calcio5");
 
-        regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        modalita = new Modalita(1, CAMPIONATO);
-        stagione.aggiungiTorneo("WorldCup2025", sport, regolamento, modalita, 150);
+        modalita = new Modalita(1, "campionato");
+        stagione.aggiungiTorneo("WorldCup2025", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         sport = new Sport(1, "Calcio");
@@ -93,9 +110,9 @@ public class TestStagione {
     @Test
     public void testSelezionaTorneo() {
         Sport sport = new Sport(1, "Calcio");
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        Modalita modalita = new Modalita(1, "campionato");
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         stagione.selezionaTorneo(1);
@@ -110,9 +127,9 @@ public class TestStagione {
         stagione.aggiungiComponente("Mario", "Rossi", 18, "Attaccante", "MRORSS18");
         stagione.confermaSquadra();
 
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        Modalita modalita = new Modalita(1, "campionato");
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         stagione.selezionaTorneo(1);
@@ -129,9 +146,9 @@ public class TestStagione {
         stagione.aggiungiComponente("Mario", "Rossi", 18, "Attaccante", "MRORSS18");
         stagione.confermaSquadra();
 
-        Regolamento regolamento = new Regolamento(1, "Calcio5", 50, 7, 3, 0, 1);
-        Modalita modalita = new Modalita(1, CAMPIONATO);
-        stagione.aggiungiTorneo("WorldCup", sport, regolamento, modalita, 150);
+        Modalita modalita = new Modalita(1, "campionato");
+        stagione.aggiungiTorneo("WorldCup", sport, modalita, 150);
+        stagione.nuovoRegolamento(20, 8, 3, 1, 0);
         stagione.confermaTorneo();
 
         stagione.selezionaTorneo(1);
