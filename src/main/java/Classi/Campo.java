@@ -1,22 +1,21 @@
 package Classi;
 
-public class Modalita {
+public class Campo {
     private int codice;
-    private String nome;
-
+    private String tipologia;
 
     // ********************* Costruttore
-    public Modalita(int codice, String nome) {
+    public Campo(int codice, String tipologia) {
         this.codice = codice;
-        this.nome = nome;
+        this.tipologia = tipologia;
     }
 
 
     @Override
     public String toString() {
-        return "Modalita{" +
+        return "Campo{" +
                 "codice=" + codice +
-                ", nome='" + nome + '\'' +
+                ", tipologia='" + tipologia + '\'' +
                 '}';
     }
 }

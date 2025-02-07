@@ -1,5 +1,6 @@
 package Classi;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,19 +8,24 @@ import java.util.Map;
 
 public class SportManager {
     private static SportManager instanceSportManager;
+
     private Map<Integer, Modalita> elencoModalita;
     private Map<Integer, Sport> sports;
+    private Map<Integer, Campo> elencoCampi;
     private Stagione stagione;
 
+
+    // ********************* Costruttore - Su SportManager viene applicato il pattern Singleton
     private SportManager() {
         this.elencoModalita = new HashMap<>();
         this.sports = new HashMap<>();
+        this.elencoCampi = new HashMap<>();
 
+        loadElencoCampi();
         loadElencoModalita();
         loadSports();
         loadStagione();
     }
-
     public static SportManager getInstance() {
         if (instanceSportManager == null) {
             System.err.println("SportManager inizializzata");
@@ -29,31 +35,38 @@ public class SportManager {
         return instanceSportManager;
     }
 
+
+    // ********************* Caso d'Uso d'Avviamento
     public void loadSports(){
         sports.put(1, new Sport(1, "Calcio11"));
         sports.put(2, new Sport(2, "Calcio7"));
         sports.put(3, new Sport(3, "Basket"));
         sports.put(4, new Sport(4, "Pallavolo"));
-
     }
-
     public void loadElencoModalita(){
         elencoModalita.put(1, new Modalita(1, "eliminazione_diretta"));
         elencoModalita.put(2, new Modalita(2, "gironi_eliminazione_diretta"));
         elencoModalita.put(3, new Modalita(3, "campionato"));
     }
-
+    public void loadElencoCampi() {
+        elencoCampi.put(1, new Campo(1, "campo_calcio"));
+        elencoCampi.put(2, new Campo(2, "campo_basket"));
+        elencoCampi.put(3, new Campo(3, "campo_pallavolo"));
+    }
     public void loadStagione() {
         this.stagione = new Stagione("2024_2025");
     }
 
-    public void nuovoTorneo(String nome, int codice_sport, int codice_modalita, float quotaIscrizione){
+
+    // ********************* Caso d'uso UC1 - Inserisci nuovo Torneo
+    public void nuovoTorneo(String nome, int codiceSport, int codiceModalita, float quotaIscrizione){
         try {
-            Sport sportTorneo = sports.get(codice_sport);
+            Sport sportTorneo = sports.get(codiceSport);
+
             if (sportTorneo == null)
                 throw new Exception("Errore: Sport non trovato.");
 
-            Modalita modalitaTorneo = elencoModalita.get(codice_modalita);
+            Modalita modalitaTorneo = elencoModalita.get(codiceModalita);
             if (modalitaTorneo == null)
                 throw new Exception("Errore: Modalita non trovata.");
 
@@ -65,85 +78,113 @@ public class SportManager {
         }
     }
 
-    public void nuovoRegolamento(int numeroSquadre, int numeroMaxComponentiSquadra, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
-        stagione.nuovoRegolamento(numeroSquadre, numeroMaxComponentiSquadra, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
+    public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
+        stagione.nuovoRegolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
     }
 
     public void confermaTorneo(){
         stagione.confermaTorneo();
     }
 
-    public void nuovaSquadra(int codice_sport, String nome) {
-        Sport sport = sports.get(codice_sport);
 
-        stagione.aggiungiSquadra(sport, nome);
+    // ********************* Caso d'uso UC2 - Inserisci nuova Squadra/Giocatore Singolo nel Sistema
+    public void nuovaSquadra(String nome) {
+        stagione.nuovaSquadra(nome);
     }
 
-    public void nuovoComponente(String nome, String cognome, int eta, String ruolo, String CF) {
-        stagione.aggiungiComponente(nome, cognome, eta, ruolo, CF);
+    public void nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
+        stagione.nuovoGiocatoreSingolo(nome, cognome, eta, CF);
     }
 
-    public void confermaSquadra() {
-        stagione.confermaSquadra();
+    public void nuovoComponente(String nome, String cognome, int eta, String CF) {
+        stagione.nuovoComponente(nome, cognome, eta, CF);
     }
 
-    public List<Sport> iscrizioneSquadra() {
+    public void confermaPartecipante() {
+        stagione.confermaPartecipante();
+    }
+
+
+    // ********************* Caso d'uso UC3 - Inserisci nuova Squadra/Giocatore Singolo nel Torneo
+    public void iscrizionePartecipante() {
         List<Sport> elencoSport = new ArrayList<>();
 
         for(int key : sports.keySet()) {
             elencoSport.add(sports.get(key));
         }
 
-        return elencoSport;
+        System.out.println(elencoSport);
+
+        // Successivamente vedere se deve restituire qualcosa alla parte grafica
+        // return elencoSport
     }
 
-    public List<Torneo> selezionaSport(int codice_sport) {
-        Sport sport = sports.get(codice_sport);
+    public void selezionaSport(int codiceSport) {
+        Sport sport = sports.get(codiceSport);
 
-        return stagione.torneiPerSport(sport);
+        System.out.println(stagione.torneiPerSport(sport));
+
+        // Successivamente vedere se deve restituire qualcosa alla parte grafica
+        // return stagione.torneiPerSport(sport);
     }
 
-    public void selezionaTorneo(int codice_torneo) {
-        stagione.selezionaTorneo(codice_torneo);
+    public void selezionaTorneo(int codiceTorneo) {
+        stagione.selezionaTorneo(codiceTorneo);
     }
 
     public void selezionaSquadra(String nome) {
         System.out.println(stagione.selezionaSquadra(nome));
     }
 
-    public void confermaIscrizioneSquadra() {
-        stagione.confermaIscrizioneSquadra();
+    public void selezionaGiocatoreSingolo(String cf) {
+        System.out.println(stagione.selezionaGiocatoreSingolo(cf));
     }
 
-    public static SportManager getInstanceSportManager() {
-        return instanceSportManager;
+    public void visualizzaGiocatoriSingoli() {
+        System.out.println(stagione.visualizzaGiocatoriSingoli());
     }
 
-    public static void setInstanceSportManager(SportManager instanceSportManager) {
-        SportManager.instanceSportManager = instanceSportManager;
+    public void accorpaGiocatoreSingolo(String cf) {
+        stagione.accorpaGiocatoreSingolo(cf);
     }
 
+    public void confermaIscrizionePartecipante() {
+        stagione.confermaIscrizionePartecipante();
+    }
+
+
+    // ********************* Caso d'uso UC4 - Visualizza Partecipanti
+    public void visualizzaPartecipanti(int codiceTorneo) {
+        System.out.println(stagione.visualizzaPartecipanti(codiceTorneo));
+    }
+
+
+    // ********************* Caso d'uso UC5 - Crea il calendario di un Torneo
+    public void creaCalendario(int codiceTorneo) {
+        stagione.creaCalendario(codiceTorneo);
+    }
+
+    public void creaPartita(String nomePartecipante1, String nomePartecipante2) {
+        stagione.creaPartita(nomePartecipante1, nomePartecipante2);
+    }
+
+    public void selezionaDataCampo(int codiceCampo, LocalDateTime data) {
+        stagione.inizializzaPartita(elencoCampi.get(codiceCampo), data);
+    }
+
+    public void confermaCalendario() {
+        stagione.confermaCalendario();
+    }
+
+
+    // ********************* Caso d'uso UC6 - Visualizza il calendario di un Torneo
+    public void visualizzaCalendario(int codiceTorneo) {
+        System.out.println(stagione.visualizzaCalendario(codiceTorneo));
+    }
+
+
+    // ********************* Getter e Setter
     public Stagione getStagione() {
         return stagione;
-    }
-
-    public void setStagione(Stagione stagione) {
-        this.stagione = stagione;
-    }
-
-    public Map<Integer, Sport> getSports() {
-        return sports;
-    }
-
-    public void setSports(Map<Integer, Sport> sports) {
-        this.sports = sports;
-    }
-
-    public Map<Integer, Modalita> getElencoModalita() {
-        return elencoModalita;
-    }
-
-    public void setElencoModalita(Map<Integer, Modalita> elencoModalita) {
-        this.elencoModalita = elencoModalita;
     }
 }

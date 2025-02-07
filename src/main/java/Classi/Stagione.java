@@ -1,5 +1,9 @@
 package Classi;
 
+import Exceptions.WrongPartException;
+
+import javax.swing.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,22 +15,26 @@ public class Stagione {
     private Torneo torneoCorrente;
     private Map<Integer, Torneo> elencoTornei;
 
-    private Squadra squadraCorrente;
-    private Map<String, Squadra> elencoSquadre;
+    private Partecipante partecipanteCorrente;
+    private Map<String, Partecipante> elencoPartecipanti;
 
+
+    // ********************* Costruttore
     public Stagione(String nome) {
         this.nome = nome;
 
         this.elencoTornei = new HashMap<Integer, Torneo>();
-        this.elencoSquadre = new HashMap<String, Squadra>();
+        this.elencoPartecipanti = new HashMap<String, Partecipante>();
     }
 
+
+    // ********************* Caso d'uso UC1 - Inserisci nuovo Torneo
     public void aggiungiTorneo(String nome, Sport sport, Modalita modalita, float quotaIscrizione) {
         this.torneoCorrente = new Torneo(this.elencoTornei.size()+1, nome, sport, modalita, quotaIscrizione);
     }
 
-    public void nuovoRegolamento(int numeroSquadre, int numeroMaxComponentiSquadra, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
-        torneoCorrente.nuovoRegolamento(numeroSquadre, numeroMaxComponentiSquadra, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
+    public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
+        torneoCorrente.nuovoRegolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
     }
 
     public void confermaTorneo() {
@@ -37,31 +45,51 @@ public class Stagione {
         torneoCorrente = null;
     }
 
-    public void aggiungiSquadra(Sport sport, String nome) {
-        this.squadraCorrente = new Squadra(sport, nome);
+
+    // ********************* Caso d'uso UC2 - Inserisci nuova Squadra/Giocatore Singolo nel Sistema
+    public void nuovaSquadra(String nome) {
+        //Verifica unicità partecipante
+        if (elencoPartecipanti.containsKey(nome)) {
+            System.err.println("Squadra già inserita nel sistema");
+        } else {
+            this.partecipanteCorrente = new Squadra(nome);
+        }
     }
 
-    public void aggiungiComponente(String nome, String cognome, int eta, String ruolo, String CF) {
-        squadraCorrente.aggiungiComponente(nome, cognome, eta, ruolo, CF);
+    public void nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
+        if (elencoPartecipanti.containsKey(CF)) {
+            System.err.println("Giocatore già inserito nel sistema");
+        } else {
+            this.partecipanteCorrente = new GiocatoreSingolo (nome, cognome, eta, CF);
+        }
     }
 
-    public void confermaSquadra() {
-        String nome = squadraCorrente.getNome();
+    public void nuovoComponente(String nome, String cognome, int eta, String CF) {
+        GiocatoreSingolo componente = new GiocatoreSingolo (nome, cognome, eta, CF);
 
-        this.elencoSquadre.put(nome, squadraCorrente);
-
-        squadraCorrente = null;
+        try {
+            partecipanteCorrente.aggiungiComponente(CF, componente);
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
+    public void confermaPartecipante() {
+        String id = partecipanteCorrente.getId();
+
+        this.elencoPartecipanti.put(id, partecipanteCorrente);
+
+        partecipanteCorrente = null;
+    }
+
+
+    // ********************* Caso d'uso UC3 - Inserisci nuova Squadra/Giocatore Singolo nel Torneo
     public List<Torneo> torneiPerSport(Sport sport) {
         List<Torneo> tornei = new ArrayList<Torneo>();
-        Torneo torneo;
 
-        for(int key : elencoTornei.keySet()) {
-
-            torneo = elencoTornei.get(key);
+        for(Torneo torneo : elencoTornei.values()) {
             if (torneo.getSport().equals(sport) && torneo.getStato())
-                tornei.add(elencoTornei.get(key));
+                tornei.add(torneo);
         }
 
         return tornei;
@@ -72,49 +100,144 @@ public class Stagione {
     }
 
     public float selezionaSquadra(String nomeSquadra) {
-        this.squadraCorrente = elencoSquadre.get(nomeSquadra);
+        this.partecipanteCorrente = elencoPartecipanti.get(nomeSquadra);
+        String cf;
+
+        // Verifica unicità componenti squadra
+        try {
+            for(Partecipante componente : partecipanteCorrente.getElencoComponenti().values()) {
+                cf = componente.getId();
+
+                if(torneoCorrente.verificaUnicitaPartecipanteTorneo(cf)){
+                    System.out.println("Trovato giocatore nella squadra presente in un'altra squadra iscritta al torneo");
+                    return 0;
+                } else{
+                    torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
+                }
+            }
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            if(torneoCorrente.numeroMinimoGiocatori() > partecipanteCorrente.getElencoComponenti().size()){
+                System.out.println("La squadra non ha il numero minimo di giocatori.");
+            }
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
+        }
 
         return torneoCorrente.getQuotaIscrizione();
     }
 
-    public void confermaIscrizioneSquadra() {
-        torneoCorrente.iscriviSquadra(squadraCorrente.getNome(), squadraCorrente);
+    public float selezionaGiocatoreSingolo(String cf) {
+        this.partecipanteCorrente = elencoPartecipanti.get(cf);
+
+        // Verifica unicità componenti squadra
+        if(torneoCorrente.verificaUnicitaPartecipanteTorneo(cf)) {
+            System.out.println("Trovato giocatore presente in un'altra squadra iscritta al torneo");
+            return 0;
+        } else{
+            torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
+        }
+
+        return torneoCorrente.getQuotaIscrizione();
+    }
+
+    public List<GiocatoreSingolo> visualizzaGiocatoriSingoli() {
+        return torneoCorrente.visualizzaGiocatoriSingoli();
+    }
+
+    public void accorpaGiocatoreSingolo(String cf) {
+        torneoCorrente.accorpaGiocatoreSingolo(cf);
+    }
+
+    public void confermaIscrizionePartecipante() {
+        torneoCorrente.confermaIscrizionePartecipante();
+
+        elencoTornei.replace(torneoCorrente.getCodice(), torneoCorrente);
+
+        partecipanteCorrente = null;
+        torneoCorrente = null;
+    }
+
+
+    // ********************* Caso d'uso UC4 - Visualizza Partecipanti
+    public Map<String, Partecipante> visualizzaPartecipanti(int codiceTorneo) {
+        Map<String, Partecipante> partecipanti = new HashMap<>();
+        torneoCorrente = elencoTornei.get(codiceTorneo);
+
+        if(torneoCorrente != null){
+            partecipanti = torneoCorrente.getElencoPartecipanti();
+
+            if(partecipanti == null){
+                System.out.println("Nessun partecipante iscritto al torneo");
+            }
+
+        } else {
+            System.out.println("Torneo non trovato");
+            partecipanti = null;
+        }
+
+        torneoCorrente = null;
+
+        return partecipanti;
+    }
+
+
+    // ********************* Caso d'uso UC5 - Crea il calendario di un Torneo
+    public void creaCalendario(int codiceTorneo) {
+       torneoCorrente = elencoTornei.get(codiceTorneo);
+
+       torneoCorrente.creaCalendario();
+    }
+
+    public void creaPartita(String nomePartecipante1, String nomePartecipante2) {
+        torneoCorrente.creaPartita(nomePartecipante1, nomePartecipante2);
+    }
+
+    public void inizializzaPartita(Campo campo, LocalDateTime data) {
+        torneoCorrente.inizializzaPartita(campo, data);
+    }
+
+    public void confermaCalendario() {
+        torneoCorrente.confermaCalendario();
+
         elencoTornei.replace(torneoCorrente.getCodice(), torneoCorrente);
 
         torneoCorrente = null;
-        squadraCorrente = null;
     }
 
+
+    // ********************* Caso d'uso UC6 - Visualizza il calendario di un Torneo
+    public Calendario visualizzaCalendario(int codiceTorneo) {
+        torneoCorrente = elencoTornei.get(codiceTorneo);
+        Calendario calendario;
+
+        if(torneoCorrente != null){
+            calendario =  torneoCorrente.visualizzaCalendario();
+        } else {
+            System.out.println("Torneo non trovato");
+            calendario = null;
+        }
+
+        torneoCorrente = null;
+
+        return calendario;
+    }
+
+
+    // ********************* Getter Setter
     public Torneo getTorneoCorrente() {
         return torneoCorrente;
     }
 
-    public void setTorneoCorrente(Torneo torneoCorrente) {
-        this.torneoCorrente = torneoCorrente;
+    public Map<String, Partecipante> getElencoPartecipanti() {
+        return elencoPartecipanti;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Map<String, Squadra> getElencoSquadre() {
-        return elencoSquadre;
-    }
-
-    public void setElencoSquadre(Map<String, Squadra> elencoSquadre) {
-        this.elencoSquadre = elencoSquadre;
-    }
-
-    public Squadra getSquadraCorrente() {
-        return squadraCorrente;
-    }
-
-    public void setSquadraCorrente(Squadra squadraCorrente) {
-        this.squadraCorrente = squadraCorrente;
+    public Partecipante getPartecipanteCorrente() {
+        return partecipanteCorrente;
     }
 
     public Map<Integer, Torneo> getElencoTornei() {
@@ -125,14 +248,13 @@ public class Stagione {
         this.elencoTornei = elencoTornei;
     }
 
+
     @Override
     public String toString() {
         return "Stagione{" +
                 "nome='" + nome + '\'' +
-                ", torneoCorrente=" + torneoCorrente +
                 ", elencoTornei=" + elencoTornei +
-                ", squadraCorrente=" + squadraCorrente +
-                ", elencoSquadre=" + elencoSquadre +
+                ", elencoPartecipanti=" + elencoPartecipanti +
                 '}';
     }
 }

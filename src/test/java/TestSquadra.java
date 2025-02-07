@@ -8,13 +8,12 @@ public class TestSquadra {
 
     @BeforeClass
     public static void initTest() {
-        Sport sport = new Sport(1, "Calcio");
-        squadra = new Squadra(sport, "Italia");
+        squadra = new Squadra("Italia");
     }
 
     @Test
     public void testAggiungiComponente() {
-        squadra.aggiungiComponente("Mario", "Rossi", 20, "attaccante", "RSSMR17B18J");
+        squadra.aggiungiComponente("MRORSS18", new GiocatoreSingolo("Mario", "Rossi", 18, "MRORSS18"));
         assertNotNull(squadra.getElencoComponenti());
 
         for(String key : squadra.getElencoComponenti().keySet()) {

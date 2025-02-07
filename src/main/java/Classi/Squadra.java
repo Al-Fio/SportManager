@@ -1,54 +1,49 @@
 package Classi;
 
+import Exceptions.WrongPartException;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Squadra {
-    private String nome;
-    private Map<String, Componente> elencoComponenti;
-    private Sport sport;
+public class Squadra extends Partecipante {
+    private Map<String, GiocatoreSingolo> elencoComponenti;
 
-    public Squadra(Sport sport, String nome) {
-        this.nome = nome;
-        this.sport = sport;
+
+    // ********************* Costruttore
+    public Squadra(String nome) {
+        super(nome);
         this.elencoComponenti = new HashMap<>();
     }
 
-    public void aggiungiComponente(String nome, String cognome, int eta, String ruolo, String CF) {
-        Componente componente = new Componente(nome, cognome, eta, ruolo, CF);
+
+    // ********************* Caso d'uso UC2 - Inserisci nuova Squadra/Giocatore Singolo nel Sistema
+    public void aggiungiComponente(String CF, GiocatoreSingolo componente) {
         this.elencoComponenti.put(CF, componente);
     }
 
-    public String getNome() {
-        return nome;
+
+    // ********************* Caso d'uso UC3 - Inserisci nuova Squadra/Giocatore Singolo nel Torneo
+    @Override
+    public boolean verificaPresenzaComponente(String cf) throws WrongPartException {
+        return this.elencoComponenti.containsKey(cf);
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
-    public Map<String, Componente> getElencoComponenti() {
+    // ********************* Getter e Setter
+    public Map<String, GiocatoreSingolo> getElencoComponenti() {
         return elencoComponenti;
     }
 
-    public void setElencoComponenti(Map<String, Componente> elencoComponenti) {
-        this.elencoComponenti = elencoComponenti;
-    }
-
-    public Sport getSport() {
-        return sport;
-    }
-
-    public void setSport(Sport sport) {
-        this.sport = sport;
+    @Override
+    public String getId() {
+        return super.getNome();
     }
 
     @Override
     public String toString() {
         return "Squadra{" +
-                "nome='" + nome + '\'' +
+                "nome='" + super.getNome() + '\'' +
                 ", elencoComponenti=" + elencoComponenti +
-                ", sport=" + sport +
                 '}';
     }
 }
