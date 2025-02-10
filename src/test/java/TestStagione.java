@@ -2,10 +2,8 @@ import Classi.Campo;
 import Classi.Modalita;
 import Classi.Sport;
 import Classi.Stagione;
-import Exceptions.WrongPartException;
+import Eccezioni.WrongPartException;
 import org.junit.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDateTime;
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import Enum.Esito;
 
 public class SportManager {
     private static SportManager instanceSportManager;
@@ -54,7 +55,7 @@ public class SportManager {
         elencoCampi.put(3, new Campo(3, "campo_pallavolo"));
     }
     public void loadStagione() {
-        this.stagione = new Stagione("2024_2025");
+        this.stagione = new Stagione("Stagione " + LocalDateTime.now().getYear());
     }
 
 
@@ -169,11 +170,26 @@ public class SportManager {
     }
 
     public void selezionaDataCampo(int codiceCampo, LocalDateTime data) {
-        stagione.inizializzaPartita(elencoCampi.get(codiceCampo), data);
+        Campo campo = elencoCampi.get(codiceCampo);
+
+        if(stagione.verificaSovrapposizionePartite(campo, data)) {
+            stagione.inizializzaPartita(campo, data);
+            System.out.println("Partita creata con successo");
+        } else {
+            System.out.println("Errore: Sovrapposizione partite");
+        }
     }
 
     public void confermaCalendario() {
         stagione.confermaCalendario();
+    }
+
+    public void modificaCalendario(int codiceTorneo) {
+        stagione.modificaCalendario(codiceTorneo);
+    }
+
+    public void eliminaPartita(int codiceCampo, LocalDateTime data) {
+        stagione.eliminaPartita(elencoCampi.get(codiceCampo), data);
     }
 
 
@@ -182,6 +198,27 @@ public class SportManager {
         System.out.println(stagione.visualizzaCalendario(codiceTorneo));
     }
 
+
+    // ********************* Caso d'uso UC7 - Visualizza la Programmazione complessiva delle Partite
+    public void visualizzaProgrammazioneStagione() {
+        System.out.println(stagione.visualizzaProgrammazioneStagione());
+    }
+
+
+    // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
+    public void inserisciRisultatoPartita() {
+        System.out.println(stagione.getElencoTornei());
+    }
+
+    // funzione per la selezione del torneo già implementata per il caso d'uso UC3.
+
+    public void selezionaPartita(int codiceCampo, LocalDateTime data) {
+        stagione.selezionaPartita(elencoCampi.get(codiceCampo), data);
+    }
+
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+        stagione.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+    }
 
     // ********************* Getter e Setter
     public Stagione getStagione() {

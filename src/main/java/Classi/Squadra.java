@@ -1,6 +1,6 @@
 package Classi;
 
-import Exceptions.WrongPartException;
+import Eccezioni.WrongPartException;
 
 import java.util.HashMap;
 import java.util.Map;

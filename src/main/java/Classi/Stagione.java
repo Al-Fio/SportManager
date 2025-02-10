@@ -1,13 +1,13 @@
 package Classi;
 
-import Exceptions.WrongPartException;
+import Eccezioni.WrongPartException;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import Enum.Esito;
 
 public class Stagione {
     private String nome;
@@ -208,6 +208,32 @@ public class Stagione {
         torneoCorrente = null;
     }
 
+    public void modificaCalendario(int codiceTorneo) {
+        torneoCorrente = elencoTornei.get(codiceTorneo);
+
+        torneoCorrente.modificaCalendario();
+    }
+
+    public void eliminaPartita(Campo campo, LocalDateTime data) {
+        torneoCorrente.eliminaPartita(campo, data);
+    }
+
+    public boolean verificaSovrapposizionePartite(Campo campo, LocalDateTime data) {
+        Boolean verifica = true;
+
+        for(Torneo torneo : elencoTornei.values()) {
+            for(Partita partita : torneo.getCalendario().getElencoPartite()) {
+                if(partita.getCampo().equals(campo) && partita.getData().equals(data)) {
+                    verifica = false;
+
+                    return verifica;
+                }
+            }
+        }
+
+        return verifica;
+    }
+
 
     // ********************* Caso d'uso UC6 - Visualizza il calendario di un Torneo
     public Calendario visualizzaCalendario(int codiceTorneo) {
@@ -224,6 +250,28 @@ public class Stagione {
         torneoCorrente = null;
 
         return calendario;
+    }
+
+
+    // ********************* Caso d'uso UC7 - Visualizza la Programmazione complessiva delle Partite
+    public List<Partita> visualizzaProgrammazioneStagione() {
+        List<Partita> programmazione = new ArrayList<>();
+
+        for(Torneo torneo : elencoTornei.values()) {
+            programmazione.addAll(torneo.getCalendario().getElencoPartite());
+        }
+
+        return programmazione;
+    }
+
+
+    // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
+    public void selezionaPartita(Campo campo, LocalDateTime data) {
+        torneoCorrente.selezionaPartita(campo, data);
+    }
+
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+        torneoCorrente.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
     }
 
 

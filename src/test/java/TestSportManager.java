@@ -1,7 +1,7 @@
 import Classi.SportManager;
 
 import Classi.Stagione;
-import Exceptions.WrongPartException;
+import Eccezioni.WrongPartException;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;

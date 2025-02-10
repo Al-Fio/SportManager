@@ -1,12 +1,13 @@
 package Classi;
 
-import Exceptions.WrongPartException;
+import Eccezioni.WrongPartException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import Enum.Esito;
 
 public class Torneo {
     private String nome;
@@ -24,6 +25,7 @@ public class Torneo {
     private Calendario calendario;
     private Calendario calendarioCorrente;
 
+    private Classifica classifica;
 
     // ********************* Costruttore
     public Torneo(int codice, String nome, Sport sport, Modalita modalita, float quotaIscrizione) {
@@ -36,6 +38,8 @@ public class Torneo {
         this.stato = true;
         this.calendario = null;
 
+        this.classifica = new Classifica();
+
         elencoPartecipanti = new HashMap<String, Partecipante>();
     }
 
@@ -43,6 +47,8 @@ public class Torneo {
     // ********************* Caso d'uso UC1 - Inserisci nuovo Torneo
     public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
         regolamento = new Regolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
+
+        classifica.setRegolamento( regolamento );
     }
 
 
@@ -113,17 +119,30 @@ public class Torneo {
         Partecipante partecipante1 = elencoPartecipanti.get(nomePartecipante1);
         Partecipante partecipante2 = elencoPartecipanti.get(nomePartecipante2);
 
-        calendarioCorrente.creaPartita(partecipante1, partecipante2);
+        if (partecipante1 == null || partecipante2 == null) {
+            System.out.println("Partecipante non trovato");
+            return;
+        } else {
+            calendarioCorrente.creaPartita(partecipante1, partecipante2);
+        }
     }
 
     public void inizializzaPartita(Campo campo, LocalDateTime data) {
-        calendarioCorrente.inizializzaPartita(campo, data);
+        calendarioCorrente.inizializzaPartita(campo, data, this.classifica);
     }
 
     public void confermaCalendario() {
         calendario = calendarioCorrente;
 
         calendarioCorrente = null;
+    }
+
+    public void modificaCalendario() {
+        calendarioCorrente = calendario;
+    }
+
+    public void eliminaPartita(Campo campo, LocalDateTime data) {
+        calendarioCorrente.eliminaPartita(campo, data);
     }
 
 
@@ -138,6 +157,16 @@ public class Torneo {
         }
 
         return calendario;
+    }
+
+
+    // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
+    public void selezionaPartita(Campo campo, LocalDateTime data) {
+        calendario.selezionaPartita(campo, data);
+    }
+
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+
     }
 
 

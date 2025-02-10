@@ -2,9 +2,11 @@ package Classi;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import Enum.Esito;
+import Interfacce.Osservatore;
+
 import java.util.List;
-import java.util.Map;
+
 
 public class Calendario {
     public int codice;
@@ -25,10 +27,50 @@ public class Calendario {
         partitaCorrente = new Partita(partecipante1, partecipante2);
     }
 
-    public void inizializzaPartita(Campo campo, LocalDateTime data) {
+    public void inizializzaPartita(Campo campo, LocalDateTime data, Osservatore osservatore) {
         partitaCorrente.setCampo(campo);
         partitaCorrente.setData(data);
 
+        partitaCorrente.attach(osservatore);
+
+        elencoPartite.add(partitaCorrente);
+
+        partitaCorrente = null;
+    }
+
+    public void eliminaPartita(Campo campo, LocalDateTime data) {
+        boolean trovato = false;
+
+        for (Partita p : elencoPartite) {
+            if(p.getCampo().equals(campo) && p.getData().equals(data)) {
+                elencoPartite.remove(p);
+                trovato = true;
+                break;
+            }
+        }
+
+        if(!trovato) {
+            System.out.println("Partita non trovata");
+        }
+    }
+
+
+    // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
+    public void selezionaPartita(Campo campo, LocalDateTime data) {
+        for (Partita p : elencoPartite) {
+            if(p.getCampo().equals(campo) && p.getData().equals(data)) {
+                partitaCorrente = p;
+                break;
+            }
+        }
+    }
+
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+        Partita p = partitaCorrente;
+
+        partitaCorrente.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+
+        elencoPartite.remove(p);
         elencoPartite.add(partitaCorrente);
 
         partitaCorrente = null;

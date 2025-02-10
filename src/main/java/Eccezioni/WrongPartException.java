@@ -1,4 +1,4 @@
-package Exceptions;
+package Eccezioni;
 
 public class WrongPartException extends Exception {
     public WrongPartException() {

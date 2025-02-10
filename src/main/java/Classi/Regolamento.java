@@ -23,6 +23,18 @@ public class Regolamento {
         return numeroMinimoGiocatori;
     }
 
+    public int getPunteggioVittoria() {
+        return punteggioVittoria;
+    }
+
+    public int getPunteggioSconfitta() {
+        return punteggioSconfitta;
+    }
+
+    public int getPunteggioPareggio() {
+        return punteggioPareggio;
+    }
+
 
     @Override
     public String toString() {
