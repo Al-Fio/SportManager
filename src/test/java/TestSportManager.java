@@ -1,3 +1,4 @@
+import Classi.Campo;
 import Classi.SportManager;
 
 import Classi.Stagione;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 
 import java.time.LocalDateTime;
+import Enum.Esito;
 
 import static org.junit.Assert.*;
 
@@ -235,13 +237,10 @@ public class TestSportManager {
         sportManager.visualizzaGiocatoriSingoli();
         sportManager.accorpaGiocatoreSingolo("MRORSS18");
         sportManager.confermaIscrizionePartecipante();
-    }
 
-    @Test
-    public void testVisualizzaPartecipanti() {
-        useCaseUC4();
-
-        sportManager.visualizzaPartecipanti(1);
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaSquadra("Catania");
+        sportManager.confermaIscrizionePartecipante();
     }
 
 
@@ -288,21 +287,80 @@ public class TestSportManager {
         assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendario());
     }
 
-
-    // ********************* Test Caso d'uso UC6 - Visualizza il calendario di un Torneo
-    // Metodo di inizializzazione per il caso d'uso UC6
-    private void useCaseUC6() {
+    @Test
+    public void testModificaCalendario() {
         useCaseUC4();
         sportManager.creaCalendario(1);
         sportManager.creaPartita("Bari", "Catania");
-        sportManager.selezionaDataCampo(1, LocalDateTime.now());
+        sportManager.selezionaDataCampo(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.confermaCalendario();
+
+        sportManager.modificaCalendario(1);
+
+        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente());
+    }
+
+    @Test
+    public void testEliminaPartita() {
+        useCaseUC4();
+        sportManager.creaCalendario(1);
+        sportManager.creaPartita("Bari", "Catania");
+        sportManager.selezionaDataCampo(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.confermaCalendario();
+        sportManager.modificaCalendario(1);
+
+        sportManager.eliminaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        assertNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente().getPartitaCorrente());
+    }
+
+
+    // ********************* Test Caso d'uso UC8 - Inserisci i risultati di una Partita
+    // Metodo di inizializzazione per il caso d'uso UC8
+    private void useCaseUC8() {
+        useCaseUC4();
+
+        sportManager.selezionaTorneo(2);
+        sportManager.selezionaSquadra("Bari");
+        sportManager.confermaIscrizionePartecipante();
+
+        sportManager.selezionaTorneo(2);
+        sportManager.selezionaSquadra("Catania");
+        sportManager.confermaIscrizionePartecipante();
+
+        sportManager.creaCalendario(1);
+        sportManager.creaPartita("Bari", "Catania");
+        sportManager.selezionaDataCampo(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.confermaCalendario();
+
+        sportManager.creaCalendario(2);
+        sportManager.creaPartita("Catania", "Bari");
+        sportManager.selezionaDataCampo(1, LocalDateTime.of(2025, 2, 15, 15, 00));
         sportManager.confermaCalendario();
     }
 
     @Test
-    public void testVisualizzaCalendario() {
-        useCaseUC6();
+    public void testSelezionaPartita() {
+        useCaseUC8();
+        sportManager.selezionaTorneo(1);
+
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+
+        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendario().getPartitaCorrente());
+    }
+
+    @Test
+    public void testInserisciRisultato() {
+        useCaseUC8();
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+
+        sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
 
         sportManager.visualizzaCalendario(1);
     }
+
+
+
 }

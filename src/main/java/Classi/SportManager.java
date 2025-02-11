@@ -220,6 +220,7 @@ public class SportManager {
         stagione.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
     }
 
+
     // ********************* Getter e Setter
     public Stagione getStagione() {
         return stagione;

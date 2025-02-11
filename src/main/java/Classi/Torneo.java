@@ -13,7 +13,6 @@ public class Torneo {
     private String nome;
     private float quotaIscrizione;
     private int codice;
-    private boolean stato;
 
     private Sport sport;
     private Regolamento regolamento;
@@ -35,7 +34,6 @@ public class Torneo {
         this.regolamento = null;
         this.modalita = modalita;
         this.quotaIscrizione = quotaIscrizione;
-        this.stato = true;
         this.calendario = null;
 
         this.classifica = new Classifica();
@@ -166,7 +164,7 @@ public class Torneo {
     }
 
     public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
-
+        calendario.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
     }
 
 
@@ -191,10 +189,6 @@ public class Torneo {
         return quotaIscrizione;
     }
 
-    public boolean getStato() {
-        return stato;
-    }
-
     public void setPartecipanteCorrente(Partecipante partecipanteCorrente) {
         this.partecipanteCorrente = partecipanteCorrente;
     }
@@ -217,7 +211,6 @@ public class Torneo {
                 ", regolamento=" + regolamento +
                 ", modalita=" + modalita +
                 ", elencoSquadre=" + elencoPartecipanti +
-                ", stato=" + stato +
                 '}';
     }
 }

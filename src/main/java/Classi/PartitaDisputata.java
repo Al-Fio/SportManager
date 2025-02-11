@@ -30,4 +30,16 @@ public class PartitaDisputata implements StatoPartita {
             System.err.println(e.getMessage());
         }
     }
+
+
+    @Override
+    public String toString() {
+        return "PartitaDisputata{" +
+                "punteggioPartecipante1=" + punteggioPartecipante1 +
+                ", punteggioPartecipante2=" + punteggioPartecipante2 +
+                ", esitoPartecipante1=" + esitoPartecipante1 +
+                ", esitoPartecipante2=" + esitoPartecipante2 +
+                ", partita=" + partita +
+                '}';
+    }
 }

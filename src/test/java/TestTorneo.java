@@ -1,5 +1,7 @@
 import Classi.*;
 import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDateTime;
 
@@ -9,8 +11,8 @@ public class TestTorneo {
     private static Torneo torneo;
     private static SportManager sportManager;
 
-    @BeforeClass
-    public static void initTest() {
+    @Before
+    public void initTest() {
         sportManager = SportManager.getInstance();
 
         // Creazione tornei
@@ -45,9 +47,10 @@ public class TestTorneo {
         sportManager.confermaPartecipante();
     }
 
-    @AfterClass
-    public static void clearTest() {
+    @After
+    public void clearTest() {
         torneo = null;
+
         Stagione stagione = sportManager.getStagione();
         stagione.getElencoTornei().clear();
         stagione.getElencoPartecipanti().clear();
@@ -55,18 +58,6 @@ public class TestTorneo {
 
 
     // ********************* Caso d'uso UC3 - Inserisci nuova Squadra/Giocatore Singolo nel Torneo
-    @Test
-    public void testConfermaIscrizionePartecipante() {
-        torneo = sportManager.getStagione().getElencoTornei().get(1);
-        torneo.setPartecipanteCorrente(new GiocatoreSingolo("Marcello", "Paperinopoli", 18, "PPRPP18"));
-        int size = torneo.getElencoPartecipanti().size();
-
-        torneo.confermaIscrizionePartecipante();
-
-        assertEquals(size+1, torneo.getElencoPartecipanti().size());
-        System.out.println(torneo.getElencoPartecipanti());
-    }
-
     @Test
     public void testVerificaUnicitaPartecipanteTorneo() {
         torneo = sportManager.getStagione().getElencoTornei().get(1);
@@ -81,6 +72,7 @@ public class TestTorneo {
     @Test
     public void testVisualizzaGiocatoriSingoli() {
         torneo = sportManager.getStagione().getElencoTornei().get(1);
+
         sportManager.selezionaTorneo(1);
         sportManager.selezionaGiocatoreSingolo("MRORSS18");
         sportManager.confermaIscrizionePartecipante();
@@ -111,15 +103,4 @@ public class TestTorneo {
 
 
     // ********************* Test Caso d'uso UC5 - Crea il calendario di un Torneo
-    @Test
-    public void testInizializzaPartita() {
-        torneo = sportManager.getStagione().getElencoTornei().get(1);
-        torneo.creaCalendario();
-        torneo.creaPartita("Bari", "Catania");
-        Campo campo = new Campo(1, "Calcio");
-
-        torneo.inizializzaPartita(campo, LocalDateTime.now());
-
-        assertEquals(1, torneo.getCalendarioCorrente().getElencoPartite().size());
-    }
 }

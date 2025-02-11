@@ -88,7 +88,7 @@ public class Stagione {
         List<Torneo> tornei = new ArrayList<Torneo>();
 
         for(Torneo torneo : elencoTornei.values()) {
-            if (torneo.getSport().equals(sport) && torneo.getStato())
+            if (torneo.getSport().equals(sport))
                 tornei.add(torneo);
         }
 
@@ -222,11 +222,13 @@ public class Stagione {
         Boolean verifica = true;
 
         for(Torneo torneo : elencoTornei.values()) {
-            for(Partita partita : torneo.getCalendario().getElencoPartite()) {
-                if(partita.getCampo().equals(campo) && partita.getData().equals(data)) {
-                    verifica = false;
+            if(torneo.getCalendario() != null) {
+                for (Partita partita : torneo.getCalendario().getElencoPartite()) {
+                    if (partita.getCampo().equals(campo) && partita.getData().equals(data)) {
+                        verifica = false;
 
-                    return verifica;
+                        return verifica;
+                    }
                 }
             }
         }

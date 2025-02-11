@@ -15,4 +15,12 @@ public class PartitaDaDisputare implements StatoPartita {
     public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
         partita.setStatoPartita(new PartitaDisputata(partita, punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2));
     }
+
+
+    @Override
+    public String toString() {
+        return "PartitaDaDisputare{" +
+                "partita=" + partita +
+                '}';
+    }
 }
