@@ -2,6 +2,8 @@ package Classi;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import Eccezioni.WrongPartException;
 import Enum.Esito;
 import Interfacce.Osservatore;
 
@@ -27,11 +29,13 @@ public class Calendario {
         partitaCorrente = new Partita(partecipante1, partecipante2);
     }
 
-    public void inizializzaPartita(Campo campo, LocalDateTime data, Osservatore osservatore) {
+    public void inizializzaPartita(Campo campo, LocalDateTime data, Osservatore osservatore1, Osservatore osservatore2) {
         partitaCorrente.setCampo(campo);
         partitaCorrente.setData(data);
 
-        partitaCorrente.attach(osservatore);
+        partitaCorrente.attach(osservatore1);
+
+        if(osservatore2 != null) partitaCorrente.attach(osservatore2);
 
         elencoPartite.add(partitaCorrente);
 
@@ -56,19 +60,37 @@ public class Calendario {
 
 
     // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
-    public void selezionaPartita(Campo campo, LocalDateTime data) {
+    public boolean selezionaPartita(Campo campo, LocalDateTime data) {
         for (Partita p : elencoPartite) {
             if(p.getCampo().equals(campo) && p.getData().equals(data)) {
                 partitaCorrente = p;
-                break;
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2, boolean aSquadre) {
+        partitaCorrente.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2, aSquadre);
+    }
+
+
+    // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    public Partecipante selezionaGiocatorePartita(String CF) {
+        return partitaCorrente.selezionaGiocatorePartita(CF);
+    }
+
+    public void inserisciStatisticheGiocatore(Partecipante partecipante, int puntiEffettuati) {
+        try {
+            partitaCorrente.inserisciStatisticheGiocatore(partecipante, puntiEffettuati);
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
         }
     }
 
-    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+    public void confermaInserimentoStatistichePartita() {
         Partita p = partitaCorrente;
-
-        partitaCorrente.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
 
         elencoPartite.remove(p);
         elencoPartite.add(partitaCorrente);
@@ -88,9 +110,9 @@ public class Calendario {
 
     @Override
     public String toString() {
-        return "Calendario{" +
-                "codice=" + codice +
-                ", elencoPartite=" + elencoPartite +
+        return "Calendario {" +
+                "codice = " + codice +
+                ", \nELENCO PARTITE:\n" + elencoPartite +
                 '}';
     }
 }

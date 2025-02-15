@@ -23,9 +23,9 @@ public class Campo {
 
     @Override
     public String toString() {
-        return "Campo{" +
-                "codice=" + codice +
-                ", tipologia='" + tipologia + '\'' +
+        return "Campo {" +
+                "codice = " + codice +
+                ", tipologia = '" + tipologia + '\'' +
                 '}';
     }
 }

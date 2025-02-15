@@ -32,4 +32,16 @@ public class StatisticheClassifica {
     public Partecipante getPartecipante() {
         return partecipante;
     }
+
+
+    @Override
+    public String toString() {
+        return "StatisticheClassifica{" +
+                "partecipante: " + partecipante +
+                ", punteggio = " + punteggio +
+                ", punti Effettuati = " + puntiEffettuati +
+                ", punti Subiti = " + puntiSubiti +
+                "} \n";
+    }
 }
+

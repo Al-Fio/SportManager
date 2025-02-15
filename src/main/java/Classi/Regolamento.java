@@ -38,12 +38,12 @@ public class Regolamento {
 
     @Override
     public String toString() {
-        return "Regolamento{" +
-                "numeroSquadre=" + numeroSquadre +
-                ", numeroMinimoGiocatori=" + numeroMinimoGiocatori +
-                ", punteggioVittoria=" + punteggioVittoria +
-                ", punteggioSconfitta=" + punteggioSconfitta +
-                ", punteggioPareggio=" + punteggioPareggio +
+        return "Regolamento {" +
+                "numeroSquadre = " + numeroSquadre +
+                ", numeroMinimoGiocatori = " + numeroMinimoGiocatori +
+                ", punteggioVittoria = " + punteggioVittoria +
+                ", punteggioSconfitta = " + punteggioSconfitta +
+                ", punteggioPareggio = " + punteggioPareggio +
                 '}';
     }
 }

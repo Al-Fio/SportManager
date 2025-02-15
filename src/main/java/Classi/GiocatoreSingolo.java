@@ -22,11 +22,11 @@ public class GiocatoreSingolo extends Partecipante{
 
     @Override
     public String toString() {
-        return "GiocatoreSingolo{" +
-                "CF='" + CF + '\'' +
-                ", nome='" + super.getNome() + '\'' +
-                ", cognome='" + cognome + '\'' +
-                ", eta=" + eta +
-                '}';
+        return "GiocatoreSingolo [" +
+                "Codice fiscale = '" + CF + '\'' +
+                ", nome = '" + super.getNome() + '\'' +
+                ", cognome = '" + cognome + '\'' +
+                ", eta = " + eta +
+                "]\n";
     }
 }

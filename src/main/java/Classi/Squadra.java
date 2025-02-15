@@ -41,9 +41,9 @@ public class Squadra extends Partecipante {
 
     @Override
     public String toString() {
-        return "Squadra{" +
-                "nome='" + super.getNome() + '\'' +
-                ", elencoComponenti=" + elencoComponenti +
-                '}';
+        return "Squadra {" +
+                "nome = '" + super.getNome() + '\'' +
+                ", ELENCO COMPONENTI: \n" + elencoComponenti +
+                "}\n";
     }
 }

@@ -1,10 +1,8 @@
 package Classi;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import Enum.Esito;
 
 public class SportManager {
@@ -79,8 +77,8 @@ public class SportManager {
         }
     }
 
-    public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
-        stagione.nuovoRegolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
+    public Torneo nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
+        return stagione.nuovoRegolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
     }
 
     public void confermaTorneo(){
@@ -89,16 +87,16 @@ public class SportManager {
 
 
     // ********************* Caso d'uso UC2 - Inserisci nuova Squadra/Giocatore Singolo nel Sistema
-    public void nuovaSquadra(String nome) {
-        stagione.nuovaSquadra(nome);
+    public boolean nuovaSquadra(String nome) {
+        return stagione.nuovaSquadra(nome);
     }
 
-    public void nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
-        stagione.nuovoGiocatoreSingolo(nome, cognome, eta, CF);
+    public boolean nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
+        return stagione.nuovoGiocatoreSingolo(nome, cognome, eta, CF);
     }
 
-    public void nuovoComponente(String nome, String cognome, int eta, String CF) {
-        stagione.nuovoComponente(nome, cognome, eta, CF);
+    public GiocatoreSingolo nuovoComponente(String nome, String cognome, int eta, String CF) {
+        return stagione.nuovoComponente(nome, cognome, eta, CF);
     }
 
     public void confermaPartecipante() {
@@ -120,43 +118,52 @@ public class SportManager {
         // return elencoSport
     }
 
-    public void selezionaSport(int codiceSport) {
+    public List<Torneo> selezionaSport(int codiceSport) {
         Sport sport = sports.get(codiceSport);
 
-        System.out.println(stagione.torneiPerSport(sport));
-
-        // Successivamente vedere se deve restituire qualcosa alla parte grafica
-        // return stagione.torneiPerSport(sport);
+        return stagione.torneiPerSport(sport);
     }
 
-    public void selezionaTorneo(int codiceTorneo) {
-        stagione.selezionaTorneo(codiceTorneo);
+    public Torneo selezionaTorneo(int codiceTorneo) {
+        return stagione.selezionaTorneo(codiceTorneo);
     }
 
-    public void selezionaSquadra(String nome) {
-        System.out.println(stagione.selezionaSquadra(nome));
+    public float selezionaSquadra(String nome) {
+        return stagione.selezionaSquadra(nome);
     }
 
-    public void selezionaGiocatoreSingolo(String cf) {
-        System.out.println(stagione.selezionaGiocatoreSingolo(cf));
+    public float selezionaGiocatoreSingolo(String cf) {
+        return stagione.selezionaGiocatoreSingolo(cf);
     }
 
-    public void visualizzaGiocatoriSingoli() {
-        System.out.println(stagione.visualizzaGiocatoriSingoli());
+    public boolean visualizzaGiocatoriSingoli() {
+        Collection<GiocatoreSingolo> giocatori = stagione.visualizzaGiocatoriSingoli();
+
+        if(giocatori.isEmpty()) {
+            System.out.println("Non ci sono giocatori singoli iscritti al torneo");
+            return false;
+        } else {
+            System.out.println(giocatori);
+            return true;
+        }
     }
 
-    public void accorpaGiocatoreSingolo(String cf) {
-        stagione.accorpaGiocatoreSingolo(cf);
+    public boolean accorpaGiocatoreSingolo(String cf) {
+        return stagione.accorpaGiocatoreSingolo(cf);
     }
 
     public void confermaIscrizionePartecipante() {
         stagione.confermaIscrizionePartecipante();
     }
 
+    public boolean squadraCompleta() {
+        return stagione.squadraCompleta();
+    }
+
 
     // ********************* Caso d'uso UC4 - Visualizza Partecipanti
-    public void visualizzaPartecipanti(int codiceTorneo) {
-        System.out.println(stagione.visualizzaPartecipanti(codiceTorneo));
+    public Map<String, Partecipante> visualizzaPartecipanti(int codiceTorneo) {
+        return stagione.visualizzaPartecipanti(codiceTorneo);
     }
 
 
@@ -165,18 +172,18 @@ public class SportManager {
         stagione.creaCalendario(codiceTorneo);
     }
 
-    public void creaPartita(String nomePartecipante1, String nomePartecipante2) {
-        stagione.creaPartita(nomePartecipante1, nomePartecipante2);
+    public boolean creaPartita(String nomePartecipante1, String nomePartecipante2) {
+        return stagione.creaPartita(nomePartecipante1, nomePartecipante2);
     }
 
-    public void selezionaDataCampo(int codiceCampo, LocalDateTime data) {
+    public boolean selezionaDataCampo(int codiceCampo, LocalDateTime data) {
         Campo campo = elencoCampi.get(codiceCampo);
 
         if(stagione.verificaSovrapposizionePartite(campo, data)) {
             stagione.inizializzaPartita(campo, data);
-            System.out.println("Partita creata con successo");
+            return true;
         } else {
-            System.out.println("Errore: Sovrapposizione partite");
+            return false;
         }
     }
 
@@ -194,14 +201,14 @@ public class SportManager {
 
 
     // ********************* Caso d'uso UC6 - Visualizza il calendario di un Torneo
-    public void visualizzaCalendario(int codiceTorneo) {
-        System.out.println(stagione.visualizzaCalendario(codiceTorneo));
+    public Calendario visualizzaCalendario(int codiceTorneo) {
+        return stagione.visualizzaCalendario(codiceTorneo);
     }
 
 
     // ********************* Caso d'uso UC7 - Visualizza la Programmazione complessiva delle Partite
-    public void visualizzaProgrammazioneStagione() {
-        System.out.println(stagione.visualizzaProgrammazioneStagione());
+    public List<Partita> visualizzaProgrammazioneStagione() {
+        return stagione.visualizzaProgrammazioneStagione();
     }
 
 
@@ -212,12 +219,51 @@ public class SportManager {
 
     // funzione per la selezione del torneo già implementata per il caso d'uso UC3.
 
-    public void selezionaPartita(int codiceCampo, LocalDateTime data) {
-        stagione.selezionaPartita(elencoCampi.get(codiceCampo), data);
+    public boolean selezionaPartita(int codiceCampo, LocalDateTime data) {
+        return stagione.selezionaPartita(elencoCampi.get(codiceCampo), data);
     }
 
     public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
         stagione.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+    }
+
+
+    // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    public boolean selezionaGiocatorePartita(String CF) {
+        return stagione.selezionaGiocatorePartita(CF);
+    }
+
+    public void inserisciStatisticheGiocatore(int puntiEffettuati) {
+        stagione.inserisciStatisticheGiocatore(puntiEffettuati);
+    }
+
+    public void confermaInserimentoStatistichePartita() {
+        stagione.confermaInserimentoStatistichePartita();
+    }
+
+    public boolean torneoASquadre() {
+        if(stagione.getTorneoCorrente().getRegolamento().getNumeroMinimoGiocatori() == 1)
+            return false;
+        else
+            return true;
+    }
+
+
+    // ********************* Caso d'uso UC10 - Visualizza le Statistiche di un Torneo
+    public Map<Integer, Torneo> visualizzaStatisticheTorneo() {
+        return stagione.getElencoTornei();
+    }
+
+    public void visualizzaClassificaTorneo(int codiceTorneo) {
+        stagione.visualizzaClassificaTorneo(codiceTorneo);
+    }
+
+
+    // ********************* Caso d'uso UC11 - Eliminazione Stagione
+    public void eliminaStagione() {
+        stagione = null;
+        System.out.println("Stagione eliminata con successo");
+
     }
 
 

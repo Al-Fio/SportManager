@@ -143,6 +143,7 @@ public class TestSportManager {
     @Test
     public void testIscrizioneSquadra() {
         sportManager.iscrizionePartecipante();
+
     }
 
     @Test
@@ -198,6 +199,7 @@ public class TestSportManager {
         useCaseUC3();
 
         sportManager.selezionaTorneo(1);
+        sportManager.selezionaSquadra("Bari");
         sportManager.visualizzaGiocatoriSingoli();
     }
 
@@ -235,7 +237,6 @@ public class TestSportManager {
         sportManager.selezionaTorneo(1);
         sportManager.selezionaSquadra("Bari");
         sportManager.visualizzaGiocatoriSingoli();
-        sportManager.accorpaGiocatoreSingolo("MRORSS18");
         sportManager.confermaIscrizionePartecipante();
 
         sportManager.selezionaTorneo(1);
@@ -362,5 +363,47 @@ public class TestSportManager {
     }
 
 
+    // ********************* Test Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    @Test
+    public void testSelezionaGiocatorePartita() {
+        useCaseUC8();
+
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
+
+        sportManager.selezionaGiocatorePartita("PPRPP18");
+        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getPartecipanteCorrente());
+    }
+
+    @Test
+    public void testInserisciStatisticheGiocatore() {
+        useCaseUC8();
+
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
+
+        sportManager.selezionaGiocatorePartita("MRORSS18");
+
+        sportManager.inserisciStatisticheGiocatore(10);
+
+        sportManager.visualizzaClassificaTorneo(1);
+    }
+
+    @Test
+    public void testConfermaInserimentoStatistichePartita() {
+        useCaseUC8();
+
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
+        sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
+        sportManager.selezionaGiocatorePartita("MRORSS18");
+        sportManager.inserisciStatisticheGiocatore(10);
+
+        sportManager.confermaInserimentoStatistichePartita();
+
+        sportManager.visualizzaClassificaTorneo(1);
+    }
 
 }

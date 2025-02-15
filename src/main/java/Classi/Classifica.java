@@ -1,10 +1,13 @@
 package Classi;
 
+import Eccezioni.WrongPartException;
 import Interfacce.Osservatore;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import Enum.Esito;
+import Interfacce.StatoPartita;
 
 public class Classifica implements Osservatore {
     List<StatisticheClassifica> listaClassifica;
@@ -22,8 +25,13 @@ public class Classifica implements Osservatore {
     private void aggiornaClassifica(Partecipante partecipante, int puntiEffettuati, int puntiSubiti, Esito esito) {
         int incrementoPunteggio;
 
+        Comparator<StatisticheClassifica> comparator = Comparator
+                .comparingInt((StatisticheClassifica sG) -> sG.punteggio)
+                .thenComparing(sG -> sG.puntiEffettuati)
+                .thenComparing(sG -> sG.puntiSubiti).reversed();
+
         switch (esito) {
-            case VITTORIA:
+            case VITTORIA, VITTORIA_A_TAVOLINO:
                 incrementoPunteggio = regolamento.getPunteggioVittoria();
                 break;
 
@@ -31,7 +39,7 @@ public class Classifica implements Osservatore {
                 incrementoPunteggio = regolamento.getPunteggioPareggio();
                 break;
 
-            case SCONFITTA:
+            case SCONFITTA, SCONFITTA_A_TAVOLINO:
                 incrementoPunteggio = regolamento.getPunteggioSconfitta();
                 break;
 
@@ -47,22 +55,47 @@ public class Classifica implements Osservatore {
                 classifica.setPuntiEffettuati(puntiEffettuati);
                 classifica.setPuntiSubiti(puntiSubiti);
 
+                listaClassifica.sort(comparator);
+
                 return;
             }
         }
 
         listaClassifica.add(new StatisticheClassifica(partecipante, incrementoPunteggio, puntiEffettuati, puntiSubiti));
+
+        listaClassifica.sort(comparator);
     }
 
     @Override
-    public void update(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2, Partecipante partecipante1, Partecipante partecipante2) {
-        aggiornaClassifica(partecipante1, punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1);
-        aggiornaClassifica(partecipante2, punteggioPartecipante2, punteggioPartecipante1, esitoPartecipante2);
+    public void update(StatoPartita partita, int operazione) {
+        if(operazione == 0) {
+            Partecipante partecipante1 = partita.getPartecipante1();
+            Partecipante partecipante2 = partita.getPartecipante2();
+
+            Esito esitoPartecipante1 = partita.getEsitoPartecipante1();
+            Esito esitoPartecipante2 = partita.getEsitoPartecipante2();
+            int punteggioPartecipante1 = partita.getPunteggioPartecipante1();
+            int punteggioPartecipante2 = partita.getPunteggioPartecipante2();
+
+            aggiornaClassifica(partecipante1, punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1);
+            aggiornaClassifica(partecipante2, punteggioPartecipante2, punteggioPartecipante1, esitoPartecipante2);
+        }
     }
 
 
     // ********************* Getter e Setter
     public void setRegolamento(Regolamento regolamento) {
         this.regolamento = regolamento;
+    }
+
+    public List<StatisticheClassifica> getListaClassifica() {
+        return listaClassifica;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Classifica {\n" + listaClassifica +
+                '}';
     }
 }

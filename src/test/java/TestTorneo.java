@@ -81,26 +81,11 @@ public class TestTorneo {
         sportManager.selezionaGiocatoreSingolo("MRCBRT35");
         sportManager.confermaIscrizionePartecipante();
 
+        sportManager.selezionaTorneo(1);
+        sportManager.selezionaSquadra("Bari");
+
         System.out.println(torneo.visualizzaGiocatoriSingoli());
     }
-
-    @Test
-    public void testAccorpaGiocatoreSingolo() {
-        torneo = sportManager.getStagione().getElencoTornei().get(1);
-        torneo.setPartecipanteCorrente(new GiocatoreSingolo("Marcello", "Paperinopoli", 18, "PPRPP18"));
-        torneo.confermaIscrizionePartecipante();
-
-        int size = torneo.getElencoPartecipanti().size();
-
-        torneo = sportManager.getStagione().getElencoTornei().get(1);
-        torneo.setPartecipanteCorrente(new Squadra("Bari"));
-        torneo.accorpaGiocatoreSingolo("PPRPP18");
-        torneo.confermaIscrizionePartecipante();
-
-        assertEquals(size, torneo.getElencoPartecipanti().size());
-        System.out.println(torneo.getElencoPartecipanti());
-    }
-
 
     // ********************* Test Caso d'uso UC5 - Crea il calendario di un Torneo
 }

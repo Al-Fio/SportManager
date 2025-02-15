@@ -1,5 +1,6 @@
 package Classi;
 
+import Eccezioni.WrongPartException;
 import Interfacce.Osservabile;
 import Interfacce.Osservatore;
 import Interfacce.StatoPartita;
@@ -41,15 +42,42 @@ public class Partita implements Osservabile {
         this.osservatori.remove(osservatore);
     }
 
-    public void notifyChangeState(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+    public void notify(int operazione) {
         for( Osservatore osservatore : osservatori)
-            osservatore.update(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2, this.partecipante1, this.partecipante2);
+            osservatore.update(statoPartita, operazione);
     }
 
-    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
+    public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2, boolean aSquadre) {
         if (statoPartita instanceof PartitaDaDisputare) {
-            statoPartita.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
-            notifyChangeState(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+            statoPartita.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2, aSquadre);
+            notify(0);
+        }
+    }
+
+
+    // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    public Partecipante selezionaGiocatorePartita(String CF) {
+        Partecipante giocatore = null;
+        try {
+            giocatore = partecipante1.getElencoComponenti().get(CF);
+
+            if(giocatore == null) {
+                giocatore = partecipante2.getElencoComponenti().get(CF);
+            }
+
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return giocatore;
+    }
+
+    public void inserisciStatisticheGiocatore(Partecipante partecipante, int puntiEffettuati) throws WrongPartException {
+        if(statoPartita instanceof PartitaDaDisputare)
+            throw new WrongPartException();
+        else {
+            statoPartita.inserisciStatisticheGiocatore(partecipante, puntiEffettuati);
+            notify(1);
         }
     }
 
@@ -75,15 +103,62 @@ public class Partita implements Osservabile {
         return data;
     }
 
+    public Partecipante getPartecipante1() {
+        return partecipante1;
+    }
+
+    public Partecipante getPartecipante2() {
+        return partecipante2;
+    }
+
+    public int getPunteggioPartecipante1() throws WrongPartException {
+        if(!(statoPartita instanceof PartitaDisputata)) {
+            throw new WrongPartException();
+        }
+
+        return 0;
+    }
+
+    public int getPunteggioPartecipante2() throws WrongPartException {
+        if(!(statoPartita instanceof PartitaDisputata)) {
+            throw new WrongPartException();
+        }
+
+        return 0;
+    }
+
+    public Esito getEsitoPartecipante1() throws WrongPartException {
+        if(!(statoPartita instanceof PartitaDisputata)) {
+            throw new WrongPartException();
+        }
+
+        return null;
+    }
+
+    public Esito getEsitoPartecipante2() throws WrongPartException {
+        if(!(statoPartita instanceof PartitaDisputata)) {
+            throw new WrongPartException();
+        }
+
+        return null;
+    }
+
+    public List<StatisticheGiocatore> getStatistiche() throws WrongPartException {
+        if(!(statoPartita instanceof PartitaDisputata)) {
+            throw new WrongPartException();
+        }
+
+        return null;
+    }
+
 
     @Override
     public String toString() {
-        return "Partita{" +
-                "data=" + data +
-                ", partecipante1=" + partecipante1 +
-                ", partecipante2=" + partecipante2 +
-                ", campo=" + campo +
-                ", statoPartita=" + statoPartita +
-                '}';
+        return "Partita [" +
+                "partecipante1: " + partecipante1 +
+                ", partecipante2: " + partecipante2 +
+                ", campo: " + campo +
+                "data = " + data +
+                "]\n";
     }
 }

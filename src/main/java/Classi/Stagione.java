@@ -3,10 +3,8 @@ package Classi;
 import Eccezioni.WrongPartException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import Enum.Esito;
 
 public class Stagione {
@@ -33,8 +31,10 @@ public class Stagione {
         this.torneoCorrente = new Torneo(this.elencoTornei.size()+1, nome, sport, modalita, quotaIscrizione);
     }
 
-    public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
+    public Torneo nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
         torneoCorrente.nuovoRegolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
+
+        return torneoCorrente;
     }
 
     public void confermaTorneo() {
@@ -47,31 +47,36 @@ public class Stagione {
 
 
     // ********************* Caso d'uso UC2 - Inserisci nuova Squadra/Giocatore Singolo nel Sistema
-    public void nuovaSquadra(String nome) {
+    public boolean nuovaSquadra(String nome) {
         //Verifica unicità partecipante
         if (elencoPartecipanti.containsKey(nome)) {
-            System.err.println("Squadra già inserita nel sistema");
+            return false;
         } else {
             this.partecipanteCorrente = new Squadra(nome);
+            return true;
         }
     }
 
-    public void nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
+    public boolean nuovoGiocatoreSingolo(String nome, String cognome, int eta, String CF) {
         if (elencoPartecipanti.containsKey(CF)) {
-            System.err.println("Giocatore già inserito nel sistema");
+            return false;
         } else {
             this.partecipanteCorrente = new GiocatoreSingolo (nome, cognome, eta, CF);
+            return true;
         }
     }
 
-    public void nuovoComponente(String nome, String cognome, int eta, String CF) {
+    public GiocatoreSingolo nuovoComponente(String nome, String cognome, int eta, String CF) {
         GiocatoreSingolo componente = new GiocatoreSingolo (nome, cognome, eta, CF);
 
         try {
             partecipanteCorrente.aggiungiComponente(CF, componente);
+            return componente;
         } catch (WrongPartException e) {
             System.err.println(e.getMessage());
         }
+
+        return null;
     }
 
     public void confermaPartecipante() {
@@ -95,13 +100,19 @@ public class Stagione {
         return tornei;
     }
 
-    public void selezionaTorneo(int codiceTorneo) {
+    public Torneo selezionaTorneo(int codiceTorneo) {
         this.torneoCorrente = elencoTornei.get(codiceTorneo);
+        return torneoCorrente;
     }
 
     public float selezionaSquadra(String nomeSquadra) {
-        this.partecipanteCorrente = elencoPartecipanti.get(nomeSquadra);
         String cf;
+
+        this.partecipanteCorrente = elencoPartecipanti.get(nomeSquadra);
+
+        if(partecipanteCorrente == null) {
+            return -1;
+        }
 
         // Verifica unicità componenti squadra
         try {
@@ -110,7 +121,7 @@ public class Stagione {
 
                 if(torneoCorrente.verificaUnicitaPartecipanteTorneo(cf)){
                     System.out.println("Trovato giocatore nella squadra presente in un'altra squadra iscritta al torneo");
-                    return 0;
+                    return -1;
                 } else{
                     torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
                 }
@@ -119,12 +130,8 @@ public class Stagione {
             System.err.println(e.getMessage());
         }
 
-        try {
-            if(torneoCorrente.numeroMinimoGiocatori() > partecipanteCorrente.getElencoComponenti().size()){
-                System.out.println("La squadra non ha il numero minimo di giocatori.");
-            }
-        } catch (WrongPartException e) {
-            System.err.println(e.getMessage());
+        if(!squadraCompleta()) {
+            torneoCorrente.setElencoGiocatoriSingoliCorrente();
         }
 
         return torneoCorrente.getQuotaIscrizione();
@@ -133,10 +140,14 @@ public class Stagione {
     public float selezionaGiocatoreSingolo(String cf) {
         this.partecipanteCorrente = elencoPartecipanti.get(cf);
 
+        if(partecipanteCorrente == null) {
+            return -1;
+        }
+
         // Verifica unicità componenti squadra
         if(torneoCorrente.verificaUnicitaPartecipanteTorneo(cf)) {
             System.out.println("Trovato giocatore presente in un'altra squadra iscritta al torneo");
-            return 0;
+            return -1;
         } else{
             torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
         }
@@ -144,12 +155,12 @@ public class Stagione {
         return torneoCorrente.getQuotaIscrizione();
     }
 
-    public List<GiocatoreSingolo> visualizzaGiocatoriSingoli() {
+    public Collection<GiocatoreSingolo> visualizzaGiocatoriSingoli() {
         return torneoCorrente.visualizzaGiocatoriSingoli();
     }
 
-    public void accorpaGiocatoreSingolo(String cf) {
-        torneoCorrente.accorpaGiocatoreSingolo(cf);
+    public boolean accorpaGiocatoreSingolo(String cf) {
+        return torneoCorrente.accorpaGiocatoreSingolo(cf);
     }
 
     public void confermaIscrizionePartecipante() {
@@ -161,6 +172,17 @@ public class Stagione {
         torneoCorrente = null;
     }
 
+    public boolean squadraCompleta() {
+        try {
+            if(torneoCorrente.numeroMinimoGiocatori() > partecipanteCorrente.getElencoComponenti().size()){
+                return false;
+            }
+        } catch (WrongPartException e) {
+            System.err.println(e.getMessage());
+        }
+        return true;
+    }
+
 
     // ********************* Caso d'uso UC4 - Visualizza Partecipanti
     public Map<String, Partecipante> visualizzaPartecipanti(int codiceTorneo) {
@@ -169,13 +191,7 @@ public class Stagione {
 
         if(torneoCorrente != null){
             partecipanti = torneoCorrente.getElencoPartecipanti();
-
-            if(partecipanti == null){
-                System.out.println("Nessun partecipante iscritto al torneo");
-            }
-
         } else {
-            System.out.println("Torneo non trovato");
             partecipanti = null;
         }
 
@@ -192,8 +208,8 @@ public class Stagione {
        torneoCorrente.creaCalendario();
     }
 
-    public void creaPartita(String nomePartecipante1, String nomePartecipante2) {
-        torneoCorrente.creaPartita(nomePartecipante1, nomePartecipante2);
+    public boolean creaPartita(String nomePartecipante1, String nomePartecipante2) {
+        return torneoCorrente.creaPartita(nomePartecipante1, nomePartecipante2);
     }
 
     public void inizializzaPartita(Campo campo, LocalDateTime data) {
@@ -259,21 +275,63 @@ public class Stagione {
     public List<Partita> visualizzaProgrammazioneStagione() {
         List<Partita> programmazione = new ArrayList<>();
 
-        for(Torneo torneo : elencoTornei.values()) {
-            programmazione.addAll(torneo.getCalendario().getElencoPartite());
-        }
+        if(elencoTornei != null)
+            for(Torneo torneo : elencoTornei.values())
+                programmazione.addAll(torneo.getCalendario().getElencoPartite());
+        else
+            return null;
 
         return programmazione;
     }
 
 
     // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
-    public void selezionaPartita(Campo campo, LocalDateTime data) {
-        torneoCorrente.selezionaPartita(campo, data);
+    public boolean selezionaPartita(Campo campo, LocalDateTime data) {
+        return torneoCorrente.selezionaPartita(campo, data);
     }
 
     public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
         torneoCorrente.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+    }
+
+
+    // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    public boolean selezionaGiocatorePartita(String CF) {
+        return torneoCorrente.selezionaGiocatorePartita(CF);
+    }
+
+    public void inserisciStatisticheGiocatore(int puntiEffettuati) {
+        torneoCorrente.inserisciStatisticheGiocatore(puntiEffettuati);
+    }
+
+    public void confermaInserimentoStatistichePartita() {
+        torneoCorrente.confermaInserimentoStatistichePartita();
+
+        elencoTornei.replace(torneoCorrente.getCodice(), torneoCorrente);
+    }
+
+
+    // ********************* Caso d'uso UC10 - Visualizza le Statistiche di un Torneo
+    public void visualizzaClassificaTorneo(int codiceTorneo) {
+        torneoCorrente = elencoTornei.get(codiceTorneo);
+
+        if(torneoCorrente == null) {
+            System.out.println("Torneo non trovato");
+            return;
+        }
+
+        Classifica classifica = torneoCorrente.getClassifica();
+
+        if(!classifica.getListaClassifica().isEmpty())
+            System.out.println(classifica);
+        else
+            System.out.println("Classifica vuota");
+
+        ClassificaGiocatori classificaGiocatori = torneoCorrente.getClassificaGiocatori();
+        if(classificaGiocatori != null)
+            System.out.println(classificaGiocatori);
+
+        torneoCorrente = null;
     }
 
 

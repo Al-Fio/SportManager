@@ -20,9 +20,9 @@ public class Sport {
 
     @Override
     public String toString() {
-        return "Sport{" +
-                "codice=" + codice +
-                ", name='" + nome + '\'' +
-                '}';
+        return "Sport {" +
+                "codiceSport = " + codice +
+                ", nomeSport = '" + nome + '\'' +
+                "} \n";
     }
 }

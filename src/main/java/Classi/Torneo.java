@@ -3,10 +3,8 @@ package Classi;
 import Eccezioni.WrongPartException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import Enum.Esito;
 
 public class Torneo {
@@ -19,12 +17,16 @@ public class Torneo {
     private Modalita modalita;
 
     private Map<String, Partecipante> elencoPartecipanti;
+    private Map<String, GiocatoreSingolo> elencoGiocatoriSingoliCorrente;
     private Partecipante partecipanteCorrente;
 
     private Calendario calendario;
     private Calendario calendarioCorrente;
 
     private Classifica classifica;
+
+    private ClassificaGiocatori classificaGiocatori;
+
 
     // ********************* Costruttore
     public Torneo(int codice, String nome, Sport sport, Modalita modalita, float quotaIscrizione) {
@@ -46,7 +48,11 @@ public class Torneo {
     public void nuovoRegolamento(int numeroSquadre, int numeroMinimoGiocatori, int punteggioVittoria, int punteggioPareggio, int punteggioSconfitta) {
         regolamento = new Regolamento(numeroSquadre, numeroMinimoGiocatori, punteggioVittoria, punteggioPareggio, punteggioSconfitta);
 
-        classifica.setRegolamento( regolamento );
+        classifica.setRegolamento(regolamento);
+
+        if(regolamento.getNumeroMinimoGiocatori() != 1) {
+            classificaGiocatori = new ClassificaGiocatori();
+        }
     }
 
 
@@ -75,20 +81,17 @@ public class Torneo {
         return regolamento.getNumeroMinimoGiocatori();
     }
 
-    public List<GiocatoreSingolo> visualizzaGiocatoriSingoli() {
-        List<GiocatoreSingolo> giocatoriSingoli = new ArrayList<GiocatoreSingolo>();
-
-        for(Partecipante partecipante : elencoPartecipanti.values()) {
-            if (partecipante.getClass().equals(GiocatoreSingolo.class)) {
-                giocatoriSingoli.add((GiocatoreSingolo) partecipante);
-            }
-        }
-
-        return giocatoriSingoli;
+    public Collection<GiocatoreSingolo> visualizzaGiocatoriSingoli() {
+        if (elencoGiocatoriSingoliCorrente == null)
+            return null;
+        else
+            return elencoGiocatoriSingoliCorrente.values();
     }
 
-    public void accorpaGiocatoreSingolo(String cf) {
-        GiocatoreSingolo giocatore = (GiocatoreSingolo) elencoPartecipanti.get(cf);
+    public boolean accorpaGiocatoreSingolo(String cf) {
+        GiocatoreSingolo giocatore = elencoGiocatoriSingoliCorrente.get(cf);
+
+        if(giocatore == null) {return true;}
 
         try {
             partecipanteCorrente.aggiungiComponente(cf, giocatore);
@@ -96,7 +99,8 @@ public class Torneo {
             System.err.println(e.getMessage());
         }
 
-        elencoPartecipanti.remove(cf);
+        elencoGiocatoriSingoliCorrente.remove(cf);
+        return true;
     }
 
     public void confermaIscrizionePartecipante() {
@@ -105,6 +109,15 @@ public class Torneo {
         elencoPartecipanti.put(id, partecipanteCorrente);
 
         partecipanteCorrente = null;
+
+        if(elencoGiocatoriSingoliCorrente != null) {
+            for (Partecipante partecipante : elencoPartecipanti.values())
+                if ((partecipante.getClass().equals(GiocatoreSingolo.class)) && (!elencoGiocatoriSingoliCorrente.containsKey(partecipante.getId())))
+                    elencoPartecipanti.remove(partecipante.getId());
+
+            elencoGiocatoriSingoliCorrente = null;
+        }
+
     }
 
 
@@ -113,20 +126,20 @@ public class Torneo {
         calendarioCorrente = new Calendario(codice);
     }
 
-    public void creaPartita(String nomePartecipante1, String nomePartecipante2) {
+    public boolean creaPartita(String nomePartecipante1, String nomePartecipante2) {
         Partecipante partecipante1 = elencoPartecipanti.get(nomePartecipante1);
         Partecipante partecipante2 = elencoPartecipanti.get(nomePartecipante2);
 
         if (partecipante1 == null || partecipante2 == null) {
-            System.out.println("Partecipante non trovato");
-            return;
+            return false;
         } else {
             calendarioCorrente.creaPartita(partecipante1, partecipante2);
+            return true;
         }
     }
 
     public void inizializzaPartita(Campo campo, LocalDateTime data) {
-        calendarioCorrente.inizializzaPartita(campo, data, this.classifica);
+        calendarioCorrente.inizializzaPartita(campo, data, this.classifica, this.classificaGiocatori);
     }
 
     public void confermaCalendario() {
@@ -159,12 +172,38 @@ public class Torneo {
 
 
     // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
-    public void selezionaPartita(Campo campo, LocalDateTime data) {
-        calendario.selezionaPartita(campo, data);
+    public boolean selezionaPartita(Campo campo, LocalDateTime data) {
+        return calendario.selezionaPartita(campo, data);
     }
 
     public void inserisciRisultato(int punteggioPartecipante1, int punteggioPartecipante2, Esito esitoPartecipante1, Esito esitoPartecipante2) {
-        calendario.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2);
+        if(regolamento.getNumeroMinimoGiocatori() == 1)
+            calendario.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2, false);
+        else
+            calendario.inserisciRisultato(punteggioPartecipante1, punteggioPartecipante2, esitoPartecipante1, esitoPartecipante2, true);
+    }
+
+
+    // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
+    public boolean selezionaGiocatorePartita(String CF) {
+        partecipanteCorrente = calendario.selezionaGiocatorePartita(CF);
+
+        if(partecipanteCorrente == null) {
+            return false;
+        } else
+            return true;
+
+    }
+
+    public void inserisciStatisticheGiocatore(int puntiEffettuati) {
+        if (partecipanteCorrente != null)
+            calendario.inserisciStatisticheGiocatore(partecipanteCorrente, puntiEffettuati);
+        else
+            System.out.println("Giocatore non trovato");
+    }
+
+    public void confermaInserimentoStatistichePartita() {
+        calendario.confermaInserimentoStatistichePartita();
     }
 
 
@@ -193,6 +232,16 @@ public class Torneo {
         this.partecipanteCorrente = partecipanteCorrente;
     }
 
+    public void setElencoGiocatoriSingoliCorrente() {
+        elencoGiocatoriSingoliCorrente = new HashMap<String, GiocatoreSingolo>();
+
+        for(Partecipante partecipante : elencoPartecipanti.values()) {
+            if (partecipante.getClass().equals(GiocatoreSingolo.class)) {
+                elencoGiocatoriSingoliCorrente.put(partecipante.getId(), (GiocatoreSingolo) partecipante);
+            }
+        }
+    }
+
     public Calendario getCalendario() {
         return calendario;
     }
@@ -201,16 +250,28 @@ public class Torneo {
         return calendarioCorrente;
     }
 
+    public Classifica getClassifica() {
+        return classifica;
+    }
+
+    public ClassificaGiocatori getClassificaGiocatori() {
+        return classificaGiocatori;
+    }
+
+    public Partecipante getPartecipanteCorrente() {
+        return partecipanteCorrente;
+    }
+
     @Override
     public String toString() {
-        return "Torneo{" +
-                "codice='" + codice + '\'' +
-                ", nome=" + nome +
-                ", quotaIscrizione=" + quotaIscrizione +
-                ", sport=" + sport +
-                ", regolamento=" + regolamento +
-                ", modalita=" + modalita +
-                ", elencoSquadre=" + elencoPartecipanti +
-                '}';
+        return "Torneo {" +
+                "codiceTorneo = '" + codice + '\'' +
+                ", nome = " + nome +
+                ", quota iscrizione = " + quotaIscrizione +
+                ", \nSPORT: " + sport +
+                ", REGOLAMENTO: " + regolamento +
+                ", \nMODALITA': " + modalita +
+                ", \nELENCO SQUADRE: \n" + elencoPartecipanti +
+                "} \n";
     }
 }

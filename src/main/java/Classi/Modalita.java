@@ -14,9 +14,9 @@ public class Modalita {
 
     @Override
     public String toString() {
-        return "Modalita{" +
-                "codice=" + codice +
-                ", nome='" + nome + '\'' +
+        return "Modalita {" +
+                "codice = " + codice +
+                ", nome = '" + nome + '\'' +
                 '}';
     }
 }
