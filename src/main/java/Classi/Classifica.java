@@ -9,7 +9,7 @@ import java.util.List;
 import Enum.Esito;
 import Interfacce.StatoPartita;
 
-public class Classifica implements Osservatore {
+public class Classifica implements Osservatore, Cloneable {
     List<StatisticheClassifica> listaClassifica;
 
     Regolamento regolamento;
@@ -90,6 +90,20 @@ public class Classifica implements Osservatore {
 
     public List<StatisticheClassifica> getListaClassifica() {
         return listaClassifica;
+    }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Classifica clone = (Classifica) super.clone();
+
+        if(listaClassifica != null) {
+            for(StatisticheClassifica classifica : listaClassifica) {
+                clone.listaClassifica.add((StatisticheClassifica) classifica.clone());
+            }
+        }
+
+        return clone;
     }
 
 

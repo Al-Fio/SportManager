@@ -10,7 +10,7 @@ import Interfacce.Osservatore;
 import java.util.List;
 
 
-public class Calendario {
+public class Calendario implements Cloneable{
     public int codice;
 
     private List<Partita> elencoPartite;
@@ -63,7 +63,11 @@ public class Calendario {
     public boolean selezionaPartita(Campo campo, LocalDateTime data) {
         for (Partita p : elencoPartite) {
             if(p.getCampo().equals(campo) && p.getData().equals(data)) {
-                partitaCorrente = p;
+                try {
+                    partitaCorrente = (Partita) p.clone();
+                } catch (CloneNotSupportedException e) {
+                    System.err.println(e.getMessage());
+                }
                 return true;
             }
         }
@@ -107,6 +111,23 @@ public class Calendario {
     public Partita getPartitaCorrente() {
         return partitaCorrente;
     }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Calendario clone = (Calendario) super.clone();
+
+        clone.elencoPartite = new ArrayList<>();
+
+        if(elencoPartite != null) {
+            for(Partita p : elencoPartite) {
+                clone.elencoPartite.add((Partita) p.clone());
+            }
+        }
+
+        return clone;
+    }
+
 
     @Override
     public String toString() {

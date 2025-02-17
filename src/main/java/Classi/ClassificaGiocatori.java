@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ClassificaGiocatori implements Osservatore {
+public class ClassificaGiocatori implements Osservatore, Cloneable {
     Map<String, StatisticheGiocatore> listaStatistiche;
 
     public ClassificaGiocatori() {
@@ -38,6 +38,20 @@ public class ClassificaGiocatori implements Osservatore {
                 aggiornaStatistiche(statisticheGiocatore);
             }
         }
+    }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        ClassificaGiocatori clone = new ClassificaGiocatori();
+
+        if(listaStatistiche != null) {
+            for(StatisticheGiocatore statisticheGiocatore : listaStatistiche.values()) {
+                clone.aggiornaStatistiche((StatisticheGiocatore) statisticheGiocatore.clone());
+            }
+        }
+
+        return clone;
     }
 
 

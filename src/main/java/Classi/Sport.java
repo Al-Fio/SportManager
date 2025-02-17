@@ -23,6 +23,6 @@ public class Sport {
         return "Sport {" +
                 "codiceSport = " + codice +
                 ", nomeSport = '" + nome + '\'' +
-                "} \n";
+                "}\n";
     }
 }

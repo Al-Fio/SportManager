@@ -5,7 +5,7 @@ import Eccezioni.WrongPartException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Partecipante {
+public abstract class Partecipante implements Cloneable {
     private String nome;
 
 
@@ -40,5 +40,11 @@ public abstract class Partecipante {
     public Map<String, GiocatoreSingolo> getElencoComponenti() throws WrongPartException{
         if(this instanceof GiocatoreSingolo) throw new WrongPartException();
         return new HashMap<String, GiocatoreSingolo>();
+    }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

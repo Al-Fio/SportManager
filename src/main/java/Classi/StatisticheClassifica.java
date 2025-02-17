@@ -1,6 +1,6 @@
 package Classi;
 
-public class StatisticheClassifica {
+public class StatisticheClassifica implements Cloneable {
     Partecipante partecipante;
     int punteggio;
     int puntiEffettuati;
@@ -31,6 +31,16 @@ public class StatisticheClassifica {
 
     public Partecipante getPartecipante() {
         return partecipante;
+    }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        StatisticheClassifica clone = (StatisticheClassifica) super.clone();
+
+        clone.partecipante = (Partecipante) partecipante.clone();
+
+        return clone;
     }
 
 

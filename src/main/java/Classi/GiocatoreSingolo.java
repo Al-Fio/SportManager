@@ -21,6 +21,12 @@ public class GiocatoreSingolo extends Partecipante{
 
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+
+    @Override
     public String toString() {
         return "GiocatoreSingolo [" +
                 "Codice fiscale = '" + CF + '\'' +

@@ -7,7 +7,7 @@ import java.util.*;
 
 import Enum.Esito;
 
-public class Torneo {
+public class Torneo implements Cloneable {
     private String nome;
     private float quotaIscrizione;
     private int codice;
@@ -91,12 +91,14 @@ public class Torneo {
     public boolean accorpaGiocatoreSingolo(String cf) {
         GiocatoreSingolo giocatore = elencoGiocatoriSingoliCorrente.get(cf);
 
-        if(giocatore == null) {return true;}
+        if(giocatore == null) {return false;}
 
         try {
             partecipanteCorrente.aggiungiComponente(cf, giocatore);
+            System.out.println(partecipanteCorrente);
         } catch (WrongPartException e) {
             System.err.println(e.getMessage());
+            return false;
         }
 
         elencoGiocatoriSingoliCorrente.remove(cf);
@@ -110,14 +112,27 @@ public class Torneo {
 
         partecipanteCorrente = null;
 
-        if(elencoGiocatoriSingoliCorrente != null) {
+        /*if(elencoGiocatoriSingoliCorrente != null) {
             for (Partecipante partecipante : elencoPartecipanti.values())
                 if ((partecipante.getClass().equals(GiocatoreSingolo.class)) && (!elencoGiocatoriSingoliCorrente.containsKey(partecipante.getId())))
                     elencoPartecipanti.remove(partecipante.getId());
 
             elencoGiocatoriSingoliCorrente = null;
-        }
+        }*/
 
+
+        if (elencoGiocatoriSingoliCorrente != null) {
+            Iterator<Partecipante> iterator = elencoPartecipanti.values().iterator();
+
+            while (iterator.hasNext()) {
+                Partecipante partecipante = iterator.next();
+                if (partecipante.getClass().equals(GiocatoreSingolo.class) &&
+                        !elencoGiocatoriSingoliCorrente.containsKey(partecipante.getId())) {
+                    iterator.remove();
+                }
+            }
+            elencoGiocatoriSingoliCorrente = null;
+        }
     }
 
 
@@ -149,7 +164,11 @@ public class Torneo {
     }
 
     public void modificaCalendario() {
-        calendarioCorrente = calendario;
+        try {
+            calendarioCorrente = (Calendario) calendario.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void eliminaPartita(Campo campo, LocalDateTime data) {
@@ -161,6 +180,7 @@ public class Torneo {
     public Calendario visualizzaCalendario() {
         if (calendario == null) {
             System.out.println("Calendario non trovato");
+            return null;
         }
 
         if(calendario.getElencoPartite() == null) {
@@ -186,7 +206,11 @@ public class Torneo {
 
     // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
     public boolean selezionaGiocatorePartita(String CF) {
-        partecipanteCorrente = calendario.selezionaGiocatorePartita(CF);
+        try {
+            partecipanteCorrente = (Partecipante) calendario.selezionaGiocatorePartita(CF).clone();
+        } catch (CloneNotSupportedException e) {
+            System.err.println(e.getMessage());
+        }
 
         if(partecipanteCorrente == null) {
             return false;
@@ -229,10 +253,15 @@ public class Torneo {
     }
 
     public void setPartecipanteCorrente(Partecipante partecipanteCorrente) {
-        this.partecipanteCorrente = partecipanteCorrente;
+        try {
+            this.partecipanteCorrente = (Partecipante) partecipanteCorrente.clone();
+        } catch (CloneNotSupportedException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void setElencoGiocatoriSingoliCorrente() {
+        elencoGiocatoriSingoliCorrente = null;
         elencoGiocatoriSingoliCorrente = new HashMap<String, GiocatoreSingolo>();
 
         for(Partecipante partecipante : elencoPartecipanti.values()) {
@@ -262,14 +291,35 @@ public class Torneo {
         return partecipanteCorrente;
     }
 
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Torneo clone = (Torneo) super.clone();
+        
+        if(elencoPartecipanti != null) {
+            for(Partecipante partecipante : elencoPartecipanti.values()) {
+                clone.elencoPartecipanti.put(partecipante.getId(), (Partecipante) partecipante.clone());
+            }
+        }
+        if(calendario != null)
+            clone.calendario = (Calendario) calendario.clone();
+        if(classifica != null)
+            clone.classifica = (Classifica) classifica.clone();
+        if(classificaGiocatori != null)
+            clone.classificaGiocatori = (ClassificaGiocatori) classificaGiocatori.clone();
+
+        return clone;
+    }
+
+
     @Override
     public String toString() {
         return "Torneo {" +
                 "codiceTorneo = '" + codice + '\'' +
                 ", nome = " + nome +
                 ", quota iscrizione = " + quotaIscrizione +
-                ", \nSPORT: " + sport +
-                ", REGOLAMENTO: " + regolamento +
+                ",\nSPORT: " + sport +
+                "REGOLAMENTO: " + regolamento +
                 ", \nMODALITA': " + modalita +
                 ", \nELENCO SQUADRE: \n" + elencoPartecipanti +
                 "} \n";

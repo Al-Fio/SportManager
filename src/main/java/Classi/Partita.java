@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Partita implements Osservabile {
+public class Partita implements Osservabile, Cloneable{
     private LocalDateTime data;
     private Partecipante partecipante1;
     private Partecipante partecipante2;
@@ -153,12 +153,23 @@ public class Partita implements Osservabile {
 
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Partita clone = (Partita) super.clone();
+
+        clone.partecipante1 = (Partecipante) partecipante1.clone();
+        clone.partecipante2 = (Partecipante) partecipante2.clone();
+
+        return clone;
+    }
+
+
+    @Override
     public String toString() {
         return "Partita [" +
-                "partecipante1: " + partecipante1 +
-                ", partecipante2: " + partecipante2 +
+                "partecipante1: " + partecipante1.getId() +
+                ", partecipante2: " + partecipante2.getId() +
                 ", campo: " + campo +
                 "data = " + data +
-                "]\n";
+                "]\n\n";
     }
 }

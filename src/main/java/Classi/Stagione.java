@@ -101,14 +101,22 @@ public class Stagione {
     }
 
     public Torneo selezionaTorneo(int codiceTorneo) {
-        this.torneoCorrente = elencoTornei.get(codiceTorneo);
+        try {
+            this.torneoCorrente = (Torneo) elencoTornei.get(codiceTorneo).clone();
+        } catch (CloneNotSupportedException e) {
+            System.err.println(e.getMessage());
+        }
         return torneoCorrente;
     }
 
     public float selezionaSquadra(String nomeSquadra) {
         String cf;
 
-        this.partecipanteCorrente = elencoPartecipanti.get(nomeSquadra);
+        try {
+            this.partecipanteCorrente = (Partecipante) elencoPartecipanti.get(nomeSquadra).clone();
+        } catch (CloneNotSupportedException e) {
+            System.err.println(e.getMessage());
+        }
 
         if(partecipanteCorrente == null) {
             return -1;
@@ -122,10 +130,10 @@ public class Stagione {
                 if(torneoCorrente.verificaUnicitaPartecipanteTorneo(cf)){
                     System.out.println("Trovato giocatore nella squadra presente in un'altra squadra iscritta al torneo");
                     return -1;
-                } else{
-                    torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
                 }
             }
+
+            torneoCorrente.setPartecipanteCorrente(partecipanteCorrente);
         } catch (WrongPartException e) {
             System.err.println(e.getMessage());
         }
@@ -174,7 +182,7 @@ public class Stagione {
 
     public boolean squadraCompleta() {
         try {
-            if(torneoCorrente.numeroMinimoGiocatori() > partecipanteCorrente.getElencoComponenti().size()){
+            if(torneoCorrente.numeroMinimoGiocatori() > torneoCorrente.getPartecipanteCorrente().getElencoComponenti().size()){
                 return false;
             }
         } catch (WrongPartException e) {
@@ -203,9 +211,13 @@ public class Stagione {
 
     // ********************* Caso d'uso UC5 - Crea il calendario di un Torneo
     public void creaCalendario(int codiceTorneo) {
-       torneoCorrente = elencoTornei.get(codiceTorneo);
+        try {
+            torneoCorrente = (Torneo) elencoTornei.get(codiceTorneo).clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
 
-       torneoCorrente.creaCalendario();
+        torneoCorrente.creaCalendario();
     }
 
     public boolean creaPartita(String nomePartecipante1, String nomePartecipante2) {
@@ -225,7 +237,11 @@ public class Stagione {
     }
 
     public void modificaCalendario(int codiceTorneo) {
-        torneoCorrente = elencoTornei.get(codiceTorneo);
+        try {
+            torneoCorrente = (Torneo) elencoTornei.get(codiceTorneo).clone();
+        } catch (CloneNotSupportedException e) {
+            System.err.println(e.getMessage());
+        }
 
         torneoCorrente.modificaCalendario();
     }
@@ -277,7 +293,8 @@ public class Stagione {
 
         if(elencoTornei != null)
             for(Torneo torneo : elencoTornei.values())
-                programmazione.addAll(torneo.getCalendario().getElencoPartite());
+                if(torneo.getCalendario() != null)
+                    programmazione.addAll(torneo.getCalendario().getElencoPartite());
         else
             return null;
 

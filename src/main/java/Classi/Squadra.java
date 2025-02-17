@@ -39,6 +39,21 @@ public class Squadra extends Partecipante {
         return super.getNome();
     }
 
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Squadra clone = (Squadra) super.clone();
+
+        clone.elencoComponenti = new HashMap<>();
+
+        for(GiocatoreSingolo comp : elencoComponenti.values()) {
+            clone.elencoComponenti.put(comp.getId(), (GiocatoreSingolo) comp.clone());
+        }
+
+        return clone;
+    }
+
+
     @Override
     public String toString() {
         return "Squadra {" +

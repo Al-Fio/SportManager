@@ -1,6 +1,6 @@
 package Classi;
 
-public class StatisticheGiocatore {
+public class StatisticheGiocatore implements Cloneable{
     GiocatoreSingolo giocatore;
     int puntiEffettuati;
 
@@ -25,6 +25,15 @@ public class StatisticheGiocatore {
         this.puntiEffettuati = puntiEffettuati;
     }
 
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        StatisticheGiocatore clone = (StatisticheGiocatore) super.clone();
+
+        clone.giocatore = (GiocatoreSingolo) giocatore.clone();
+
+        return clone;
+    }
 
     @Override
     public String toString() {
