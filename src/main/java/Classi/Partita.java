@@ -114,6 +114,8 @@ public class Partita implements Osservabile, Cloneable{
     public int getPunteggioPartecipante1() throws WrongPartException {
         if(!(statoPartita instanceof PartitaDisputata)) {
             throw new WrongPartException();
+        } else {
+            statoPartita.getPartecipante1();
         }
 
         return 0;
@@ -122,6 +124,8 @@ public class Partita implements Osservabile, Cloneable{
     public int getPunteggioPartecipante2() throws WrongPartException {
         if(!(statoPartita instanceof PartitaDisputata)) {
             throw new WrongPartException();
+        } else {
+            statoPartita.getPartecipante2();
         }
 
         return 0;
@@ -130,6 +134,8 @@ public class Partita implements Osservabile, Cloneable{
     public Esito getEsitoPartecipante1() throws WrongPartException {
         if(!(statoPartita instanceof PartitaDisputata)) {
             throw new WrongPartException();
+        } else {
+            statoPartita.getEsitoPartecipante1();
         }
 
         return null;
@@ -138,6 +144,8 @@ public class Partita implements Osservabile, Cloneable{
     public Esito getEsitoPartecipante2() throws WrongPartException {
         if(!(statoPartita instanceof PartitaDisputata)) {
             throw new WrongPartException();
+        } else {
+            statoPartita.getEsitoPartecipante2();
         }
 
         return null;
@@ -146,6 +154,8 @@ public class Partita implements Osservabile, Cloneable{
     public List<StatisticheGiocatore> getStatistiche() throws WrongPartException {
         if(!(statoPartita instanceof PartitaDisputata)) {
             throw new WrongPartException();
+        } else {
+            statoPartita.getStatistiche();
         }
 
         return null;

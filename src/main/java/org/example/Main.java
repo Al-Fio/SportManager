@@ -404,7 +404,7 @@ public class Main {
         scanner.nextLine();
         while (dataOra == null) {
             System.out.print("Inserisci la date e l'ora della partita (formato gg/MM/yyyy HH:mm): ");
-            String input = scanner.next();
+            String input = scanner.nextLine();
             try {
                 dataOra = LocalDateTime.parse(input, formatter); // Converte la stringa in LocalDateTime
             } catch (DateTimeParseException e) {
@@ -562,6 +562,7 @@ public class Main {
         System.out.print("Inserisci il codice del campo: ");
         codiceCampo = scanner.nextInt();
 
+        scanner.nextLine();
         while (dataOra == null) {
             System.out.print("Inserisci la date e l'ora della partita (formato gg/MM/yyyy HH:mm): ");
             String input = scanner.nextLine();

@@ -74,6 +74,7 @@ public class Classifica implements Osservatore, Cloneable {
 
             Esito esitoPartecipante1 = partita.getEsitoPartecipante1();
             Esito esitoPartecipante2 = partita.getEsitoPartecipante2();
+
             int punteggioPartecipante1 = partita.getPunteggioPartecipante1();
             int punteggioPartecipante2 = partita.getPunteggioPartecipante2();
 
