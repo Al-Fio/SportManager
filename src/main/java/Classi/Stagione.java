@@ -303,6 +303,10 @@ public class Stagione {
 
 
     // ********************* Caso d'uso UC8 - Inserisci i risultati di una Partita
+    public Torneo selezionaTorneoRisultati(int codiceTorneo) {
+        return this.torneoCorrente = (Torneo) elencoTornei.get(codiceTorneo);
+    }
+
     public boolean selezionaPartita(Campo campo, LocalDateTime data) {
         return torneoCorrente.selezionaPartita(campo, data);
     }
@@ -325,6 +329,8 @@ public class Stagione {
         torneoCorrente.confermaInserimentoStatistichePartita();
 
         elencoTornei.replace(torneoCorrente.getCodice(), torneoCorrente);
+
+        torneoCorrente = null;
     }
 
 

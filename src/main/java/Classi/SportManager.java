@@ -217,7 +217,9 @@ public class SportManager {
         System.out.println(stagione.getElencoTornei());
     }
 
-    // funzione per la selezione del torneo già implementata per il caso d'uso UC3.
+    public Torneo selezionaTorneoRisultati(int codiceTorneo) {
+        return stagione.selezionaTorneoRisultati(codiceTorneo);
+    }
 
     public boolean selezionaPartita(int codiceCampo, LocalDateTime data) {
         return stagione.selezionaPartita(elencoCampi.get(codiceCampo), data);

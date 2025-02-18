@@ -45,7 +45,19 @@ public class PartitaDisputata implements StatoPartita {
 
     // ********************* Caso d'uso UC9 - Inserisci Statistiche di un Giocatore
     public void inserisciStatisticheGiocatore(Partecipante partecipante, int puntiEffettuati) {
-        statistiche.add(new StatisticheGiocatore((GiocatoreSingolo) partecipante, puntiEffettuati));
+        boolean trovato = false;
+
+        if(statistiche.size() != 0) {
+            for(StatisticheGiocatore stat : statistiche) {
+                if(stat.getGiocatore().equals(partecipante)) {
+                    stat.setPuntiEffettuati(puntiEffettuati + stat.getPuntiEffettuati());
+                    trovato = true;
+                }
+            }
+        }
+
+        if(!trovato)
+            statistiche.add(new StatisticheGiocatore((GiocatoreSingolo) partecipante, puntiEffettuati));
     }
 
 

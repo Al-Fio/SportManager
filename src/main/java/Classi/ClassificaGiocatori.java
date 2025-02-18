@@ -16,26 +16,19 @@ public class ClassificaGiocatori implements Osservatore, Cloneable {
         this.listaStatistiche = new HashMap<String, StatisticheGiocatore>();
     }
 
-    private void aggiornaStatistiche(StatisticheGiocatore statisticheGiocatore) {
-        for(StatisticheGiocatore classifica : listaStatistiche.values()) {
-            if(classifica.getGiocatore().equals(statisticheGiocatore.getGiocatore())) {
-                classifica.setPuntiEffettuati(classifica.getPuntiEffettuati() + statisticheGiocatore.getPuntiEffettuati());
-                System.out.println("Classifica giocatori aggiornata: " + classifica.getPuntiEffettuati());
-                return;
-            }
-        }
-
-        listaStatistiche.put(statisticheGiocatore.getGiocatore().getId(), statisticheGiocatore);
-        System.out.println("Classifica giocatori creata: ");
+    private void aggiornaStatistiche(StatisticheGiocatore statisticaGiocatore) {
+        if(listaStatistiche.containsKey(statisticaGiocatore.getGiocatore().getId())) {
+            StatisticheGiocatore statistica = listaStatistiche.get(statisticaGiocatore.getGiocatore().getId());
+            statistica.setPuntiEffettuati(statistica.getPuntiEffettuati() + statisticaGiocatore.getPuntiEffettuati());
+        } else
+            listaStatistiche.put(statisticaGiocatore.getGiocatore().getId(), statisticaGiocatore);
     }
 
     @Override
     public void update(StatoPartita partita, int operazione) {
         if(operazione == 1){
-            List<StatisticheGiocatore> statisticheGiocatori = partita.getStatistiche();
-
-            for (StatisticheGiocatore statisticheGiocatore : statisticheGiocatori) {
-                aggiornaStatistiche(statisticheGiocatore);
+            for (StatisticheGiocatore statisticaGiocatore : partita.getStatistiche()) {
+                aggiornaStatistiche(statisticaGiocatore);
             }
         }
     }
@@ -46,6 +39,7 @@ public class ClassificaGiocatori implements Osservatore, Cloneable {
         ClassificaGiocatori clone = new ClassificaGiocatori();
 
         if(listaStatistiche != null) {
+            clone.listaStatistiche = new HashMap<>();
             for(StatisticheGiocatore statisticheGiocatore : listaStatistiche.values()) {
                 clone.aggiornaStatistiche((StatisticheGiocatore) statisticheGiocatore.clone());
             }

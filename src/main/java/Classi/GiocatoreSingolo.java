@@ -27,6 +27,13 @@ public class GiocatoreSingolo extends Partecipante{
 
 
     @Override
+    public boolean equals(Object obj) {
+        GiocatoreSingolo g = (GiocatoreSingolo) obj;
+        return g.getId().equals(this.getId());
+    }
+
+
+    @Override
     public String toString() {
         return "GiocatoreSingolo [" +
                 "Codice fiscale = '" + CF + '\'' +

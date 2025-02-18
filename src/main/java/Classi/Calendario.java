@@ -63,11 +63,7 @@ public class Calendario implements Cloneable{
     public boolean selezionaPartita(Campo campo, LocalDateTime data) {
         for (Partita p : elencoPartite) {
             if(p.getCampo().equals(campo) && p.getData().equals(data)) {
-                try {
-                    partitaCorrente = (Partita) p.clone();
-                } catch (CloneNotSupportedException e) {
-                    System.err.println(e.getMessage());
-                }
+                partitaCorrente = p;
                 return true;
             }
         }
@@ -96,8 +92,10 @@ public class Calendario implements Cloneable{
     public void confermaInserimentoStatistichePartita() {
         Partita p = partitaCorrente;
 
+        p.notify(1);
         elencoPartite.remove(p);
         elencoPartite.add(partitaCorrente);
+
 
         partitaCorrente = null;
     }
@@ -117,9 +115,8 @@ public class Calendario implements Cloneable{
     protected Object clone() throws CloneNotSupportedException {
         Calendario clone = (Calendario) super.clone();
 
-        clone.elencoPartite = new ArrayList<>();
-
         if(elencoPartite != null) {
+            clone.elencoPartite = new ArrayList<>();
             for(Partita p : elencoPartite) {
                 clone.elencoPartite.add((Partita) p.clone());
             }

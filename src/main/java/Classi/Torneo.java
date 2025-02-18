@@ -95,7 +95,6 @@ public class Torneo implements Cloneable {
 
         try {
             partecipanteCorrente.aggiungiComponente(cf, giocatore);
-            System.out.println(partecipanteCorrente);
         } catch (WrongPartException e) {
             System.err.println(e.getMessage());
             return false;
@@ -295,18 +294,17 @@ public class Torneo implements Cloneable {
     @Override
     protected Object clone() throws CloneNotSupportedException {
         Torneo clone = (Torneo) super.clone();
-        
-        if(elencoPartecipanti != null) {
-            for(Partecipante partecipante : elencoPartecipanti.values()) {
+
+        if (elencoPartecipanti != null) {
+            clone.elencoPartecipanti = new HashMap<>();
+            for (Partecipante partecipante : elencoPartecipanti.values()) {
                 clone.elencoPartecipanti.put(partecipante.getId(), (Partecipante) partecipante.clone());
             }
         }
-        if(calendario != null)
-            clone.calendario = (Calendario) calendario.clone();
-        if(classifica != null)
-            clone.classifica = (Classifica) classifica.clone();
-        if(classificaGiocatori != null)
-            clone.classificaGiocatori = (ClassificaGiocatori) classificaGiocatori.clone();
+
+        clone.calendario = (calendario != null) ? (Calendario) calendario.clone() : null;
+        clone.classifica = (Classifica) classifica.clone();
+        clone.classificaGiocatori = (ClassificaGiocatori) classificaGiocatori.clone();
 
         return clone;
     }

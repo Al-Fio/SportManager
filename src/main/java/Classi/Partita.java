@@ -77,7 +77,6 @@ public class Partita implements Osservabile, Cloneable{
             throw new WrongPartException();
         else {
             statoPartita.inserisciStatisticheGiocatore(partecipante, puntiEffettuati);
-            notify(1);
         }
     }
 
@@ -161,6 +160,10 @@ public class Partita implements Osservabile, Cloneable{
         return null;
     }
 
+    public StatoPartita getStatoPartita() {
+        return statoPartita;
+    }
+
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -168,6 +171,15 @@ public class Partita implements Osservabile, Cloneable{
 
         clone.partecipante1 = (Partecipante) partecipante1.clone();
         clone.partecipante2 = (Partecipante) partecipante2.clone();
+
+        clone.setStatoPartita(new PartitaDaDisputare(clone));
+
+        if(osservatori != null) {
+            clone.osservatori = new ArrayList<>();
+            for(Osservatore osservatore : osservatori) {
+                clone.attach(osservatore);
+            }
+        }
 
         return clone;
     }

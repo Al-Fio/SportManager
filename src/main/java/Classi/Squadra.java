@@ -45,12 +45,18 @@ public class Squadra extends Partecipante {
         Squadra clone = (Squadra) super.clone();
 
         clone.elencoComponenti = new HashMap<>();
-
         for(GiocatoreSingolo comp : elencoComponenti.values()) {
             clone.elencoComponenti.put(comp.getId(), (GiocatoreSingolo) comp.clone());
         }
 
         return clone;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        Squadra squadra = (Squadra) obj;
+        return squadra.getId().equals(this.getId());
     }
 
 

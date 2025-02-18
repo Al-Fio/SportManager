@@ -99,6 +99,7 @@ public class Classifica implements Osservatore, Cloneable {
         Classifica clone = (Classifica) super.clone();
 
         if(listaClassifica != null) {
+            clone.listaClassifica = new ArrayList<>();
             for(StatisticheClassifica classifica : listaClassifica) {
                 clone.listaClassifica.add((StatisticheClassifica) classifica.clone());
             }

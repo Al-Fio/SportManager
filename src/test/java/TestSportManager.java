@@ -252,7 +252,7 @@ public class TestSportManager {
 
         sportManager.creaCalendario(1);
 
-        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente());
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getCalendarioCorrente());
     }
 
     @Test
@@ -262,7 +262,7 @@ public class TestSportManager {
 
         sportManager.creaPartita("Bari", "Catania");
 
-        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente().getPartitaCorrente());
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getCalendarioCorrente().getPartitaCorrente());
     }
 
     @Test
@@ -273,7 +273,7 @@ public class TestSportManager {
 
         sportManager.selezionaDataCampo(1, LocalDateTime.now());
 
-        assertEquals(1, sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente().getElencoPartite().size());
+        assertEquals(1, sportManager.getStagione().getTorneoCorrente().getCalendarioCorrente().getElencoPartite().size());
     }
 
     @Test
@@ -298,7 +298,7 @@ public class TestSportManager {
 
         sportManager.modificaCalendario(1);
 
-        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente());
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getCalendarioCorrente());
     }
 
     @Test
@@ -313,7 +313,7 @@ public class TestSportManager {
         sportManager.eliminaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
 
         sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
-        assertNull(sportManager.getStagione().getElencoTornei().get(1).getCalendarioCorrente().getPartitaCorrente());
+        assertNull(sportManager.getStagione().getTorneoCorrente().getCalendarioCorrente().getPartitaCorrente());
     }
 
 
@@ -344,17 +344,17 @@ public class TestSportManager {
     @Test
     public void testSelezionaPartita() {
         useCaseUC8();
-        sportManager.selezionaTorneo(1);
+        sportManager.selezionaTorneoRisultati(1);
 
         sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
 
-        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getCalendario().getPartitaCorrente());
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getCalendario().getPartitaCorrente());
     }
 
     @Test
     public void testInserisciRisultato() {
         useCaseUC8();
-        sportManager.selezionaTorneo(1);
+        sportManager.selezionaTorneoRisultati(1);
         sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
 
         sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
@@ -368,42 +368,36 @@ public class TestSportManager {
     public void testSelezionaGiocatorePartita() {
         useCaseUC8();
 
-        sportManager.selezionaTorneo(1);
+        sportManager.selezionaTorneoRisultati(1);
         sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
         sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
 
         sportManager.selezionaGiocatorePartita("PPRPP18");
-        assertNotNull(sportManager.getStagione().getElencoTornei().get(1).getPartecipanteCorrente());
+        assertNotNull(sportManager.getStagione().getTorneoCorrente().getPartecipanteCorrente());
     }
 
     @Test
     public void testInserisciStatisticheGiocatore() {
         useCaseUC8();
 
-        sportManager.selezionaTorneo(1);
+        sportManager.selezionaTorneoRisultati(1);
         sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
         sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
 
-        sportManager.selezionaGiocatorePartita("MRORSS18");
+        sportManager.selezionaGiocatorePartita("PPRPP18");
 
         sportManager.inserisciStatisticheGiocatore(10);
 
-        sportManager.visualizzaClassificaTorneo(1);
-    }
+        sportManager.selezionaGiocatorePartita("PPRPP18");
+        sportManager.inserisciStatisticheGiocatore(3);
 
-    @Test
-    public void testConfermaInserimentoStatistichePartita() {
-        useCaseUC8();
 
-        sportManager.selezionaTorneo(1);
-        sportManager.selezionaPartita(1, LocalDateTime.of(2025, 2, 14, 15, 00));
-        sportManager.inserisciRisultato(3, 1, Esito.VITTORIA, Esito.SCONFITTA);
-        sportManager.selezionaGiocatorePartita("MRORSS18");
-        sportManager.inserisciStatisticheGiocatore(10);
+        sportManager.selezionaGiocatorePartita("PPNPL18");
+        sportManager.inserisciStatisticheGiocatore(5);
+
 
         sportManager.confermaInserimentoStatistichePartita();
 
         sportManager.visualizzaClassificaTorneo(1);
     }
-
 }

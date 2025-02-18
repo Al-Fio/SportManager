@@ -153,9 +153,10 @@ public class Main {
 
         Torneo torneo;
 
+        scanner.nextLine();
         System.out.println("\n\t\t*** Inserimento nuovo Torneo ***");
         System.out.print("Inserisci il nome del Torneo: ");
-        nomeTorneo = scanner.next();
+        nomeTorneo = scanner.nextLine();
         System.out.print("Inserisci il codice dello sport: ");
         codiceSport = scanner.nextInt();
         System.out.print("Inserisci il codice della modalità: ");
@@ -480,6 +481,7 @@ public class Main {
                         System.out.print("Inserisci il codice del campo: ");
                         codiceCampo = scanner.nextInt();
 
+                        scanner.nextLine();
                         while (dataOra == null) {
                             System.out.print("Inserisci la date e l'ora della partita (formato gg/MM/yyyy HH:mm): ");
                             String input = scanner.nextLine();
@@ -555,7 +557,7 @@ public class Main {
 
 
         System.out.print("Inserisci il codice del torneo: ");
-        sportManager.selezionaTorneo(scanner.nextInt());
+        sportManager.selezionaTorneoRisultati(scanner.nextInt());
 
         System.out.println("Seleziona la partita");
 
@@ -636,7 +638,7 @@ public class Main {
                 if(!scanner.next().equals("y"))
                     break;
 
-                System.out.println("Inserisci il codice fiscale del giocatore: ");
+                System.out.print("Inserisci il codice fiscale del giocatore: ");
                 if(sportManager.selezionaGiocatorePartita(scanner.next())) {
                     System.out.print("Inserisci le statistiche del giocatore: ");
                     sportManager.inserisciStatisticheGiocatore(scanner.nextInt());
@@ -646,11 +648,10 @@ public class Main {
             } while (true);
         }
 
-        System.out.print("Conferma inserimento risultato [y/n]: ");
-        if(scanner.next().equals("y")) {
-            sportManager.confermaInserimentoStatistichePartita();
-            System.out.println("Risultato inserito con successo!");
-        }
+
+        sportManager.confermaInserimentoStatistichePartita();
+        System.out.println("Risultato inserito con successo!");
+
     }
 
     private static void VisualizzaStatisticheTorneo() {
